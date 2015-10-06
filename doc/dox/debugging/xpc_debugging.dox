@@ -1,0 +1,151 @@
+/**
+ * \file       xpc_debugging.dox
+ *
+ *    This file describes the very basics of debugging using <i>gdb</i>.
+ *
+ * \library    libxpccut, the C unit-test library
+ * \page       xpc_debugging Debugging using GDB and Libtool
+ * \author     Chris Ahlstrom
+ * \date       2009-05-31
+ * \updates    2015-10-05
+ * \license    $XPC_SUITE_GPL_LICENSE$ (see \ref xpc_suite_license_subproject)
+ *
+ *    No debugging is provided, since this documentation could be part of
+ *    a more comprehensive documentation package covering many libraries and
+ *    applications.
+ *
+ *//**
+
+\section xpc_dbg_introduction Introduction to Debugging
+
+This document describes how to do basic debugging.
+
+It is currently somewhat incomplete.
+
+For code-coverage and profiling, see \ref xpc_coverage_profiling
+
+\section xpc_dbg_basics Basic Debugging
+
+We won't pretend to teach debugging here; this section is just to get you
+started.
+
+See some of the items in \ref xpc_dbg_references for much more information.
+
+\subsection xpc_dbg_basics_no_libtool Building Without Libtool Shared Libraries
+
+The first thing to note is that it is easier to debug if the project is
+built with only the static libraries in </i> <i>Libtool</i>.  With \e
+libtool and shared libraries, you have to use \e libtool to run the
+debugger, as described in section \ref xpc_dbg_libtool.
+
+However, if the application is built using only the static libraries, then
+the library code is part of the application, and the application can be
+debugged normally.  To build the application without shared libraries, they
+must be disabled.  Run (or re-run) the 'configure' script with the following
+options:
+
+\verbatim
+   $ ./configure --enable-debug --disable-shared
+\endverbatim
+
+If you know you want to debug the project before you bootstrap it, then
+bootstrap it this way:
+
+\verbatim
+   $ ./bootstrap --enable-debug
+\endverbatim
+
+This command sets up the make system, then executes the <tt>./configure</tt>
+command shown above, including the --disable-shared.
+
+\subsection xpc_dbg_basics_gdb GDB
+
+\subsection xpc_dbg_basics_cgdb CGDB
+
+\subsection xpc_dbg_basics_ddd DDD
+
+
+\section xpc_dbg_libtool Debugging a Libtoolized Application
+
+An application that has been created using Libtool, but that has not yet
+been official installed, requires some special handling for debugging.
+
+As with a normal application or library, the source-code a build system for
+a project reside in a small directory hierarchy with directories such as
+<tt>src</tt>, <tt>include</tt> (or, in our projects, <tt>include/xpc</tt>),
+and <tt>tests</tt>.  
+
+In a normal library, the library file (archive) is created in the
+<tt>src</tt> directory.
+
+This library is linked to the test application, which is created in the
+<tt>tests</tt> directory, and is a binary file of ELF format.
+
+But there are some differences once Libtool is used:
+
+   -  <tt>src</tt>.
+      -  <tt>libxpccut.la</tt>.  Instead of a single static archive (library)
+         that is created, this file is created.  It contains some information
+         about the shared library, static library, installation location, and
+         other items of information that describe the newly-created library.
+      -  <tt>.libs</tt>.  The newly created static library is deposited here,
+         instead.  Here is what is in this hidden directory:
+         -  The original, static library, <tt>libxpccut.a</tt>.
+         -  The shared library, <tt>libxpccut.so.0.1.1</tt>.
+         -  Links to the static and shared library, similar to what one would
+            see when the library is installed.
+         -  All of the object modules for each source-code module,
+            <tt>*.o</tt>.
+         -  A copy of <tt>libxpccut.la</tt>, called <tt>libxcpcut.lai</tt>,
+            that differs only in having a tag <i>installed</i> set to
+            <i>yes</i> instead of <i>no</i>.
+   -  <tt>tests</tt>.
+      -  <tt>unit_test_test</tt>.  Instead of a binary executable file, this
+         item is actually a script.  When executed, it looks as if the
+         original application is being executed directly.  But it is
+         actually a script that sets up so the shared libraries can be found
+         and accessed while the unininstalled (and hidden) application runs.
+      -  <tt>.libs</tt>.  Just as with the <tt>src/.libs</tt> directory,
+         this hidden directory contains the actual binary for the
+         application.  There are two binaries there -- we don't yet know
+         what the difference is -- a topic for the future.
+
+Try running the following command:
+
+\verbatim
+   $ gdb unit_test_test
+\endverbatim
+
+<i>gdb</i> will complain:
+
+\verbatim
+".../xpccut-1.1/tests/unit_test_test": not
+in executable format: File format not recognized
+\endverbatim
+
+This makes sense, since <tt>unit_test_test</tt> is a script.  In order to
+debug the application, we have to let Libtool execute the debugger:
+
+\verbatim
+   $ libtool --mode=execute gdb unit_test_test
+   $ libtool --mode=execute cgdb unit_test_test
+   $ libtool --mode=execute ddd unit_test_test
+\endverbatim
+
+Commands like these can also be used to execute valgrind and strace, too.
+
+\section xpc_dbg_references References
+
+   -  http://heather.cs.ucdavis.edu/~matloff/debug.html
+      Norm Matloff's Debugging Tutorial
+   -  http://nostarch.com/debugging.htm
+      N. Matloff and P.J. Salzman (2008) "The Art of Debugging with GDB,
+      DDD, and Eclipse", a very good tutorial book.
+
+ */
+
+/*
+ * xpccut/doc/dox/xpc_debugging.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

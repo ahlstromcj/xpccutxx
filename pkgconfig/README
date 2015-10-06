@@ -1,0 +1,11 @@
+README for the "pkgconfig" Directory
+Chris Ahlstrom
+2008-03-04 to 2015-10-05
+
+This directory contains the pkgconfig file templates needed by any project
+that wants to use (i.e. link to) libxpccut and the other XPCCUT++ libraries.
+
+For more information about pkgconfig, see the documentation section and its
+coverage of GNU Automake.
+
+# vim: ts=3 sw=3 et ft=sh

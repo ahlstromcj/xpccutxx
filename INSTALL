@@ -1,0 +1,42 @@
+INSTALL for XPCCUT++ 1.1.2
+Chris Ahlstrom
+2015-10-05 to 2015-10-06
+
+The xpccut++ projects  use a recursive make process, and also support building
+on Windows with mingw.
+
+The documentation is provided almost exclusively in Doxygen format in
+directories named "doc/dox".  One can read them directly in a text editor,
+or build HTML and PDF files using the following commands:
+
+   $ ./bootstrap
+   $ ./build docs
+
+The PDF file will be found in the xpc_basic/release/doc/dox directory.
+This is the best way to understand the layout of the XPCCUT projects.
+
+If you just want to have the libraries and test applications built and
+tested, then run the following command (which also accepts an
+'--enable-debug' option):
+
+   $ ./scripts/build --test
+
+Otherwise, run the following command to start to learn more:
+
+   $ ./bootstrap --help
+
+You will probably want to install the bootstrap scripts system-wide using
+the --boot-install option.
+
+Packages that must be installed (exact names may vary on your system) in
+order to build this project:
+
+   automake, autoconf, autopoint, autotools-dev, and autoconf-archive
+   gcc, g++, libtool
+   doxygen
+   gettext
+   graphviz
+   texlive, texlive-latex-base
+   tofrodos
+
+# vim: ts=3 sw=3 et ft=sh

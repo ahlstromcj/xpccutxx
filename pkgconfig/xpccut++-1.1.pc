@@ -1,0 +1,68 @@
+#*****************************************************************************
+# xpccut++-1.1.pc.in
+#-----------------------------------------------------------------------------
+##
+# \file       	xpccut++-1.1.pc.in
+# \library    	libxpccut++
+# \author     	Chris Ahlstrom
+# \date       	2008-05-07
+# \updates    	2015-10-05
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#     Provides a pkg-config file for the XPC Cut++ library.
+#
+#     This file is a pkg-config file describing the libxpccut++ library, API
+#     version 1.1.  Generates the file xpccut++-1.1.pc, which will be installed
+#     in /usr/local/lib/pkgconfig/xpccut++-1.1.pc.in.
+#
+#     Access it using the command
+#
+#        pkg-config xpccut++-1.1
+#
+#     Note that the name of the package, xpccut++-1.1, is not used in
+#     installation, except for documentation.  Since we have more than one
+#     related library, we use a common package name, xpccut++-1.1, instead.
+#
+#     XPC requires the pthread and math libraries, but we can't put them
+#     below because there isn't a pkgconfig file for either of them --
+#     they're noted as "private" instead.
+#
+# \note
+#     We do not need to "Require" the libxpccut library, because the
+#     bootstrap script makes sure it is build, and its object modules linked
+#     into the libxpccut++ library.  Nor do we need to add -lxpccut to the
+#     list of libraries.
+#
+# \references
+#     -  http://www.openismus.com/documents/linux/building_libraries
+#           /building_libraries.shtml
+#
+#     Also see the README file in the xpccut directory for a real-life story
+#     about using pkgconfig.
+#
+#-----------------------------------------------------------------------------
+
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+cutpplibdir=@cutpplibdir@
+cutppincludedir=@cutppincludedir@
+datarootdir=${prefix}/share
+
+Name: xpccut++-1.1
+Description: Cross-Platform C++ Unit Test Framework from the XPC Suite
+Version: 1.1
+URL: https://github.com/ahlstromc/xpccut++
+Requires:
+Conflicts:
+Libs: -L${cutpplibdir} -lxpccut++
+Libs.private: -lpthread -lm
+Cflags: -I${cutppincludedir}
+
+#******************************************************************************
+# xpccut++-1.1.pc.in
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=automake
+#------------------------------------------------------------------------------

@@ -1,0 +1,187 @@
+/**
+ * \file       xpc_mingw.dox
+ *
+ *    This file provides information about building XPC in the Mingw
+ *    environment, along with how to use pthreads in Mingw and Windows.
+ *
+ * \library    xpc_mingw
+ * \mainpage   The XPC Suite with Mingw, Windows, and pthreads-w32
+ * \author     Chris Ahlstrom
+ * \date       2012-01-09
+ * \update     2015-10-05
+ * \license    $XPC_SUITE_GPL_LICENSE$ (See \ref xpc_mingw_license_subproject)
+ *
+ *//**
+
+\section xpc_mingw_intro Introduction
+
+The <b>XPC</b> library suite can be built in <b>Windows</b> as well as
+<b>Linux</b>.  But rather than use <b>Microsoft</b>'s <i>Visual Studio</i>
+to build it for <b>Windows</b>, we will use the <i>Mingw</i> project to
+support it.
+
+And, at first, we will build the <b>Windows</b> support from with
+<b>Linux</b> (<b>Debian</b> and <b>Gentoo</b>), rather than in
+<b>Windows</b> itself.
+
+(We will probably add a <tt>vs2010</tt> directory to hold a solution and a
+number of <tt>*.vcxproj</tt> files, but it is a low priority.)
+
+\section xpc_mingw_install Installing Mingw
+
+Mingw and its related tools can be built from source code in various
+environments, then be installed.  This build is a lot of work.
+
+However, prebuilt packages exists for most environments, and that is what
+we'll use.
+
+\subsection xpc_mingw_install_debian Installing Mingw in Debian
+
+In <b>Debian GNU/Linux</b>, a number of packages exist to support
+<i>Mingw</i>:
+
+   -  gcc-mingw32
+   -  mingw-w64
+   -  mingw32-binutils
+   -  mingw32-runtime
+
+To build <b>XPC</b> for <i>mingw</i>, try these commands for configuration:
+
+\verbatim
+   $ ./configure --host=i586-mingw32msvc --with-mingw32=/usr/i586-mingw32msvc/
+   $ ./configure --host=amd64-mingw32msvc --with-mingw32=/usr/amd64-mingw32msvc/
+\endverbatim
+
+\subsection xpc_mingw_install_gentoo Installing Mingw in Gentoo
+
+<b>Gentoo</b> provides a script called <i>crossdev</i> that
+knows how to configure and build the various parts of <i>mingw</i>:
+
+   -  sys-devel/crossdev.  This package builds and installs
+      -  dev-util/mingw-runtime
+      -  dev-util/mingw64-runtime
+      -  dev-util/w32api
+
+If you use <i>layman</i> on <b>Gentoo</b>, be sure to check out potential
+issues with it:
+
+   http://www.gentoo-wiki.info/MinGW
+
+You might want to add this line to <tt>/etc/portage/package.use</tt>:
+
+\verbatim
+   cross-i686-pc-mingw32/gcc doc gcj multilib nptl openmp libffi -gtk
+         -mudflap -objc -objc++ -objc-gc -selinux
+\endverbatim
+
+Supported architectures:
+
+   -  <tt>i686-pc-linux-gnu</tt>: The default x86 tuple for PCs.
+   -  <tt>x86_64-pc-linux-gnu</tt>: The default tuple for 64-bit x86
+      machines (such as the AMD 64 and IA64 architectures).
+   -  <tt>powerpc-unknown-linux-gnu</tt>: Support for PowerPC PCs, e.g.
+      Apple Macintoshes.
+   -  <tt>arm-unknown-linux-gnu</tt>: Support for embedded devices based on
+      ARM chips.
+   -  <tt>arm-softfloat-elf</tt>: For embedded devices with ARM chips
+      without hardware floating point.
+   -  <tt>arm-elf</tt>: For embedded devices with ARM chips with hardware
+      floating point.
+   -  <tt>i686-pc-mingw32</tt>: Supports cross-compiling for 32-bit Windows
+      (toolchain based on mingw32).
+   -  <tt>i686-w64-mingw32</tt>: Supports cross-compiling for 32-bit Windows
+      (toolchain based on mingw64).
+   -  <tt>x86_64-w64-mingw32</tt>: Supports cross-compiling for 64-bit Windows
+      (toolchain based on mingw64).
+   -  <tt>avr</tt>: Supports cross-compiling for Atmel AVR-MCU's. 
+
+   As <tt>root</tt>, run
+
+\verbatim
+   # emerge crossdev
+\endverbatim
+
+Decide the target for which you want to build.  Also decide where the
+cross-compiler is to be installed.  Then run a command like the following,
+adjusting for your choices:
+
+\verbatim
+   # crossdev --target i686-pc-mingw32 --ov-output /usr/local/portage
+\endverbatim
+
+This action will cause about 6 packages to be built.
+We had to run it twice; the first time this warning came up:
+
+\verbatim
+   !!! WARNING - Cannot auto-configure CHOST i686-pc-mingw32
+   !!! You should edit /usr/i686-pc-mingw32/etc/portage/make.conf
+   !!! by hand to complete your configuration
+    * Log: /var/log/portage/cross-i686-pc-mingw32-binutils.log
+    * Emerging cross-binutils ...
+\endverbatim
+
+You can also run <i>crossdev</i> with the <tt>--help</tt> option to see what
+else you can do.
+
+Here's what was installed on our <b>Gentoo</b> system in
+/usr/local/portage/cross-i686-pc-mingw32:
+
+\verbatim
+   binutils -> /usr/portage/sys-devel/binutils
+   gcc -> /usr/portage/sys-devel/gcc
+   gdb -> /usr/portage/sys-devel/gdb
+   insight -> /usr/portage/dev-util/insight
+   mingw-runtime -> /usr/portage/dev-util/mingw-runtime
+   w32api -> /usr/portage/dev-util/w32api
+\endverbatim
+
+To build <b>XPC</b> for <i>mingw</i>, try this command for configuration:
+
+\verbatim
+   $ ./configure --host=i686-mingw32msvc --with-mingw32=/usr/i686-mingw32msvc/
+\endverbatim
+
+\subsection xpc_mingw_install_windows Installing Mingw in Windows
+
+We want install both <i>mingw</i> and <i>MSYS</i>.
+
+   TODO
+
+\section xpc_mingw_pthreads_install Installing Pthreads
+
+This section does not talk about installing the normal <b>Linux</b>
+<i>pthreads</i> package.  It talks about installing <i>pthreads-win32</i>
+in <b>Windows</b> and in <b>Linux</b>.
+
+\subsection xpc_mingw_install_pthreads_debian Installing pthreads in Debian
+
+On our <b>Debian</b> <i>squeeze</i> machine, <i>mingw</i> is installed in
+two locations:
+
+\verbatim
+   /usr/amd64-mingw32msvc
+   /usr/i586-mingw32msvc
+\endverbatim
+
+\subsection xpc_mingw_install_pthreads_gentoo Installing pthreads in Gentoo
+
+\subsection xpc_mingw_install_pthreads_windows Installing pthreads in Windows
+
+\section xpc_mingw_references References
+
+   -# http://en.gentoo-wiki.com/wiki/Crossdev
+   -# http://www.gentoo.org/proj/en/base/embedded/handbook/ 
+   -# http://www.gentoo.org/proj/en/base/embedded/handbook/cross-compiler.xml
+   -# http://metastatic.org/text/libtool.html
+   -# http://dev.gentoo.org/~vapier/CROSS-COMPILE-HOWTO
+   -# http://en.gentoo-wiki.com/wiki/Mingw
+   -# http://www.gentoo-wiki.info/MinGW
+   -# http://wiki.njh.eu/Cross_Compiling_for_Win32
+
+ */
+
+/******************************************************************************
+ * xpc_mingw.dox
+ *----------------------------------------------------------------------------
+ * vim: ts=3 sw=3 et syntax=doxygen
+ *//*-------------------------------------------------------------------------*/

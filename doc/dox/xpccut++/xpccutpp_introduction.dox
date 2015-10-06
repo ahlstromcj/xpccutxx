@@ -1,0 +1,140 @@
+/**
+ * \file       xpccutpp_introduction.dox
+ *
+ *    This file introduces the <b>XPC CUT++</b> unit-test library.
+ *
+ * \page       cutpp_introduction XPC C++ Unit-Test Library
+ * \library    xpccut++
+ * \author     Chris Ahlstrom
+ * \version    1.1
+ * \date       2008-03-28
+ * \updates    2015-10-06
+ * \license    $XPC_SUITE_GPL_LICENSE$ (see \ref xpc_suite_license_subproject)
+ *
+ *//**
+
+This document is fairly complete, but still a work in progress.
+
+Note that you can build the detailed-design documentation by running
+<i>doxygen</i> against the <tt>doxygen.cfg</tt> in directory
+<tt>xpccut-1.1/doc/dox</tt>.
+
+\section cutpp_introduction Introduction to the C++ Unit-Test Library
+
+The <b>XPC CUT++</b> library is a "cross-programming C++" library for a
+flexible, but fairly simple, unit-test framework.
+
+It is actually primarily (but not completely) a <b>C++</b> wrapper for the
+<b>XPC CUT</b> library, so please peruse \ref xpccut_introduction_page for
+more information.  You may need to generate that library's documentation to
+read about it.
+
+We don't pretend this library does everything needed for good
+unit-testing.  Here's what it does:
+
+   -  Provides flexible support for unit-test options including:
+      -  Test descriptions.
+      -  Quiet running (little or no output).
+      -  Timing the tests.
+      -  Running portions of the test in an interactive manner.
+   -  Provides for some organization of the unit-tests:
+      -  By group (e.g. all tests for a given class).
+      -  By case (e.g. a single member function of a class).
+      -  By sub-test (e.g. an important corner case for a function).
+   -  Provide support for automated regression testing.
+   -  Generates a clean-looking and concise test report.
+   -  Allows for fairly easy discovery of the exact failed test or
+      sub-test.
+
+Here's what it <i> doesn't </i> do:
+
+   -  Provide a way to generate a unit-test framework.
+   -  Provide for complete unit-test coverage.
+   -  Links to requirements for a project.
+   -  Allow for easy profiling.
+
+In particular, it shouldn't be considered as a replacement for the
+popular CppUnit project at http://cppunit.sourceforge.net/cppunit-wiki.
+
+\section cutpp_automake Automake Notes Specific to XPC CUT++
+
+Using <i> automake </i> to build a multiple library project is interesting.
+
+We want to incorporate the specially-compiled version of <tt>libxpccut</tt>
+(the <b>C</b> library for which <tt>libxpccut++</tt> is a class wrapper) in
+this <b>C++</b> library, because the special version of <tt>libxpccut</tt>
+does not check null pointers, and will never be installed.
+
+One way to do it is to modify the <tt>Makefile.am</tt> to include the
+<b>C</b> source-code files from the <tt>xpccut-1.1</tt> directory.  This
+looks clumsy, but ties the <b>C</b> and <b>C++</b> source files together
+logically.
+
+Another way is to treat the special version of <tt>libxpccut</tt> as a <i>
+convenience library </i> and add its contents to <tt>libxpccut++</tt>.
+This method has the disadvantage that we have to provide code in the
+<tt>bootstrap</tt> script to explicitly build the <b>C</b> version of the
+library with <tt>XPC_NO_THISPTR</tt> defined.
+
+Let's try the second way first, even though it is clumsier.  We want to
+learn more about the <tt>LIBADD</tt> macro.
+
+Both methods illustrate how clumsy it can be to treat handle a library that
+is completely dependent upon an independent library.
+
+In order to incorporate the object modules in <tt>libxpccut.a</tt> into
+<tt>libxpccut++.la</tt>, we make changes to the <tt>src</tt> <i> and </i>
+<tt>tests</tt> <tt>Makefile.am</tt>s.  These two changes have the advantage
+of leverage <tt>libtool</tt> better.
+
+First, <tt>src/Makefile.am</tt>.  All we have to do is add this definition:
+
+\verbatim
+   libxpccut___la_LIBADD = ../../xpccut-1.1/src/libxpccut.la
+\endverbatim
+
+Next, <tt>tests/Makefile.am</tt>.
+
+\verbatim
+   LIBDIRS = -L../src/.libs
+   libraries = -lxpccut++
+\endverbatim
+
+Here, all we've done is removed the explicit inclusion of the
+<tt>libxpccut</tt> library from the make process.
+
+We leave the <tt>DEPENDENCIES</tt> alone, just in case the developer
+modified <tt>libxpccut</tt> while fixing bugs.
+
+The final result is that the <tt>src</tt> build adds the <tt>libxpccut</tt>
+library to the <tt>libxpccut++</tt> library.  This is the actual call that
+links them:
+
+\verbatim
+   /bin/sh ../libtool --tag=CXX   --mode=link
+      g++  -g -O2  -Wall -Wextra -pedantic -D_REENTRANT -DAPI_VERSION=""
+      -ggdb -O0 -DDEBUG -D_DEBUG -DNWIN32 -fno-inline -version-info 1:1:0
+      -o libxpccut++.la -rpath /usr/local/lib
+      cut.lo cut_options.lo cut_status.lo
+      ../../xpccut-1.1/src/libxpccut.la
+\endverbatim
+
+Now, once we got the <tt>cut_unit_test</tt> application built using the
+<tt>libxpccut</tt> library with the <tt>XPC_NO_THISPTR</tt> option in force,
+we found that our unit test application would segfault.  We had uncovered
+some severe issues with our easy classes, due to their default constructors.
+This resulted in some changes in architecture to make the classes more
+self-contained and safer to use.
+
+\section cutpp_references References
+
+   -# http://www.gnu.org/software/autoconf/manual/automake/Libtool-Convenience-Libraries.html
+      Discusses how to build a library from 'convenience' libraries.
+
+ */
+
+/*
+ * xpccut++/doc/dox/xpccutpp_introduction.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

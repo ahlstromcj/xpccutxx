@@ -1,0 +1,146 @@
+/**
+ * \file       xpc_debian.dox
+ *
+ *    This file describes how to create a <i>Debian</i> package from an
+ *    <i>automake</i>-supported project.
+ *
+ * \library    libxpccut, the C unit-test library
+ * \page       xpc_debian Making a Debian Package
+ * \author     Chris Ahlstrom
+ * \date       2009-01-01
+ * \updates    2015-10-05
+ * \license    $XPC_SUITE_GPL_LICENSE$ (see \ref xpc_suite_license_subproject)
+ *
+ *//**
+
+\section xpc_debian_introduction Introduction
+
+The <b>XPCCUT</b> library is a unit-test library for use in C programs.
+It also serves as the basis for a complementary C++ wrapper library.
+Its name stands for <i>Cross-Platform C, C Unit Test</i>.
+
+The present page describes what we did to create a <i>Debian</i> package
+from this code.
+
+This is our first try at making a Debian package.  We welcome any ideas or
+criticism you have to offer.
+
+\section xpc_debian_steps Setup Steps
+
+Here, we have to confess that the <i>Debian way</i> covers a lot of
+variations on a theme, and we are not sure that we've done everything in the
+proper manner.
+
+The first thing to do is make sure your project is a <b>GNU autotools</b>
+project that builds and installs properly.  This build setup can then be
+supplemented with <b>Debian</b> scripts located in a <tt>debian</tt>
+subdirectory of the project.
+
+\subsection xpc_debian_initial_steps Initial Steps
+
+   -# Pick the conventions of your project carefully.  All projects seem to
+      have different layouts,  Some layouts are not handled well by the
+      debhelper tools, resulting in the need for some custom steps to be
+      created.
+   -# Make sure the various automake targets work, as they are used by the
+      debian scripts to perform these actions:
+      -  <tt>make</tt>
+      -  <tt>make install</tt>
+   -# Verify that the automake creates these items:
+      -  Directory <tt>/usr/local/include/xpccut-1.1/xpc</tt>
+         (filled with header files)
+      -  Directory <tt>/usr/local/share/doc/xpccut-1.1/html</tt>
+         (filled with documentation)
+      -  File <tt>/usr/local/share/man/man1/xpccut.1</tt>
+      -  File <tt>/usr/local/share/locale/es/LC_MESSAGES/libxpccut.mo</tt>
+      -  File <tt>/usr/local/lib/libxpccut.a</tt>
+      -  File <tt>/usr/local/lib/libxpccut.la</tt>
+      -  File <tt>/usr/local/lib/libxpccut.so</tt>
+      -  File <tt>/usr/local/lib/pkgconfig/xpccut-1.1.pc</tt>
+   -# <tt>dh_make -c gpl -e ahlstromcj\@gmail.com -n -l -p libxpccut</tt>
+   -# Edit a bunch of files in the <tt>debian</tt> directory.
+
+\subsection xpc_debian_testing_rules Steps for Testing the 'rules' File
+
+   -# Bootstrap the project (<tt>./bootstrap</tt>) in order to create the
+      Makefiles, if not already present.
+   -# Run <tt>fakeroot debian/rules clean</tt> to verify that cleaning
+      results in no errors.
+   -# Run <tt>debian/rules build</tt> to verify that the source code and
+      documentation build without errors or missing results.
+   -# Run <tt>fakeroot debian/rules binary</tt> to very that all of the
+      installation steps work.  (However, the <i>fakeroot</i> man-page says
+      not to do this step!  Do it anyway.)  See the note below in case
+      this fails.
+   -# Examine the directories created in <tt>debian/tmp</tt>.  They will
+      mirror an actual installation.
+   -# Examine the <tt>libxpccut1</tt> and <tt>libxpccut-dev</tt> directories
+      created in the <tt>debian</tt> directory.  They will also mirror the
+      actual install, though only libxpccut-dev will include the
+      documentation and header-file directories.
+   -# Examine the <tt>*.deb</tt> files (see below) that are created.  You can use
+      <i>Midnight Commander</i> (mc) or <i>Krusader</i> to see inside them
+      and verify the layout of the installations.
+
+\subsection xpc_debian_failures Handling Build Failures
+
+   Sometimes building the binary will fail the first time you run it on a
+   host, with a message like this:
+
+\verbatim
+      You needed to add /usr/lib to /etc/ld.so.conf.
+      Automake will try to fix it for you
+      /bin/sh: line 6: /etc/ld.so.conf: Permission denied
+
+      That didn't work.  Please add /usr/lib to
+      /etc/ld.so.conf and run ldconfig as root.
+      /bin/sh: line 13: ldconfig: command not found
+\endverbatim
+
+   Just do what it says and try again.
+
+\subsection xpc_debian_rebuild Doing a Complete Rebuild
+
+   -# Go to the root directory of the project.
+   -# Run <tt>dpkg-buildpackage -rfakeroot</tt>
+
+   This will create, in the parent directory above the project, the
+   following files:
+
+      -# <tt>libxpccut-dev_1.1.0_i386.deb</tt>
+      -# <tt>libxpccut1_1.1.0_i386.deb</tt>
+      -# <tt>libxpccut_1.1.0.dsc</tt>
+      -# <tt>libxpccut_1.1.0.tar.gz</tt>
+      -# <tt>libxpccut_1.1.0_i386.changes</tt>
+
+   Currently, however, we get the following error:
+
+\verbatim
+      dpkg-buildpackage: warning: Failed to sign .dsc and .changes file
+\endverbatim
+
+   Fixed yet?  If not, tell us how!
+
+\section xpc_debian_references References
+
+We used the following references to figure out what to do, though a lot
+of backtracking, interpolating, and trial-and-error was necessary:
+
+   -# http://debathena.mit.edu/packaging/
+   -# http://www.debian-administration.org/articles/337
+   -# https://help.ubuntu.com/ubuntu/packagingguide/C/basic-scratch.html
+   -# http://www.zoxx.net/notes/index.php/2006/08/09/22-create-a-debian-package-with-dh_make-and-dpkg-buildpackage
+   -# http://www.mail-archive.com/debian-mentors@lists.debian.org/msg18893.html
+   -# http://www.netfort.gr.jp/~dancer/column/libpkg-guide/libpkg-guide.html
+
+Reference 5 was most helpful, while reference 4 goes through the whole
+process quickly, including how to make your own debian repository. Reference
+6 is of great help in getting the conventions correct.
+
+ */
+
+/*
+ * xpccut/doc/dox/xpc_debian.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

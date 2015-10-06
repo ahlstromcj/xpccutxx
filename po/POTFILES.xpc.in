@@ -1,0 +1,52 @@
+#*****************************************************************************
+# POTFILES.in (po)
+#-----------------------------------------------------------------------------
+##
+# \file       	POTFILES.in
+# \library    	xpc subproject
+# \author     	Chris Ahlstrom
+# \date       	03/04/2008-05/12/2008
+# \date       	2008-03-04 to 2010-05-30
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+# 		This file is a PO input template for the XPC library project.
+#
+#     This file provides the list of files that contain text to be
+#     internationalized (translated) in the current library.
+#
+#  GNU:
+#
+#     See this web page for information about POTFILES.in:
+#
+#  http://www.gnu.org/software/gettext/manual/html_mono/gettext.html#SEC177
+#
+#     List of source files containing translatable strings.
+#     Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+#
+#-----------------------------------------------------------------------------
+
+#*****************************************************************************
+# Library files
+#-----------------------------------------------------------------------------
+
+src/build_versions.c
+src/cpu.c
+src/errorlogging.c
+src/gettext_support.c
+src/numerics.c
+src/os.c
+src/portable.c
+src/pthread_attributes.c
+src/pthreader.c
+src/syncher.c
+src/xstrings.c
+
+#*****************************************************************************
+# POTFILES.in (po)
+#-----------------------------------------------------------------------------
+# Local Variables:
+# End:
+#-----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=automake
+#-----------------------------------------------------------------------------

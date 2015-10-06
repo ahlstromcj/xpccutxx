@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+#*****************************************************************************
+# test_script (xpccut/tests)
+#-----------------------------------------------------------------------------
+##
+# \file       	test_script
+# \library    	xpc_suite\xpccut
+# \author     	Chris Ahlstrom
+# \date       	2008-04-02
+# \updates     2015-10-05
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#     Runs some combinations of options that can have erroneous side-effects
+#     that break the unit tests.
+#
+#     Note that naming this script 'test' is a bad idea, as 'test' is a
+#     standard target already.
+#
+# \todo
+#     -  We should work test coverage into this script as well.
+#
+#-----------------------------------------------------------------------------
+
+ERROR_OCCURRED="no"
+LOG_FILE="test_errors.log"
+
+rm -f $LOG_FILE
+touch $LOG_FILE
+date >> $LOG_FILE
+
+./unit_test_test --silent
+
+if [ $? != 0 ] ; then
+   echo "? --silent test of unit_test_test failed" >> $LOG_FILE
+   ERROR_OCCURRED="yes"
+fi
+
+./unit_test_test --hide-errors 1> /dev/null 2> /dev/null
+
+if [ $? != 0 ] ; then
+   echo "? --hide-errors test of unit_test_test failed" >> $LOG_FILE
+   ERROR_OCCURRED="yes"
+fi
+
+./unit_test_test --no-show-progress 1> /dev/null 2> /dev/null
+
+if [ $? != 0 ] ; then
+   echo "? --no-show-progress test of unit_test_test failed" >> $LOG_FILE
+   ERROR_OCCURRED="yes"
+fi
+
+./unit_test_test --silent --batch-mode
+
+if [ $? != 0 ] ; then
+   echo "? --silent --batch-mode test of unit_test_test failed" >> $LOG_FILE
+   ERROR_OCCURRED="yes"
+fi
+
+valgrind -v --leak-check=full ./unit_test_test --silent 1> /dev/null 2> /dev/null
+
+if [ $? != 0 ] ; then
+   echo "? valgrind test of unit_test_test failed" >> $LOG_FILE
+   ERROR_OCCURRED="yes"
+fi
+
+if [ $ERROR_OCCURRED == "yes" ] ; then
+
+   cat $LOG_FILE
+
+else
+
+   echo "All tests PASSED."
+   echo "All tests PASSED." >> $LOG_FILE
+
+fi
+
+#*****************************************************************************
+# test_script (xpccut/tests)
+#-----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=sh
+#----------------------------------------------------------------------------

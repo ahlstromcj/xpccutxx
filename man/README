@@ -1,0 +1,10 @@
+README for the "man" Directory
+Chris Ahlstrom
+2008-05-18 to 2015-10-05
+
+This directory provides rudimentary man pages for the XPC libraries.
+
+The man page mostly directs the user to read the Doxygen-generated
+documentation.
+
+# vim: ts=3 sw=3

@@ -1,0 +1,28 @@
+/**
+ * \file       xpc_mainpage_generic.dox
+ *
+ *    This library is a part of the <b>XPC</b> <i>cross-programming C/C++</i>
+ *    library suite.
+ *
+ * \library    XPC Project
+ * \mainpage   xpc_main XPC Project 1.1.0
+ * \version    1.1
+ * \date       2011-12-23
+ * \updates    2015-10-05
+ *
+ *//**
+  
+Since this documentation could be part of a more comprehensive
+documentation package covering many libraries and applications, we
+include a \mainpage directive in this stub file.
+
+This file will be copied to or clean from each documentation
+subdirectory as needed.
+
+ */
+
+/*
+ * xpccut/doc/xpc_mainpage_generic.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

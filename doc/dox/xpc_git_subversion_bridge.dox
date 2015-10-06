@@ -1,0 +1,1279 @@
+/**
+ * \file       xpc_git-subversion-bridge.dox
+ *
+ *    This document provides procedures for using Git to manage a
+ *    Subversion repository.
+ *
+ * \library    xpc_suite and its libraries, applications, and documents
+ * \author     Chris Ahlstrom
+ * \date       2012-05-16
+ * \update     2015-10-05
+ * \license    $XPC_SUITE_GPL_LICENSE$
+ *
+ *//**
+
+\page    git_svn_page Using Git with Subversion
+
+\section git_svn_intro Introduction to the Git-Subversion Bridge
+
+This document is a concise description of how to use the <i>Git</i>
+distributed version control system (DVCS) with a Subversion
+repository.
+
+Git provides a "Subversion bridge", using a number of commands that start
+with <code>git svn</code>.  These commands allow the developer to clone the
+Subversion repository, manage changes locally via the Git repository, and
+then push and pull changes against the Subversion repository.
+
+The advantages of using Git to manage a Subversion repository:
+
+   -# The developer's machine has a complete copy of the repository.  This
+      copy makes a nice backup in case the <i>Windows</i> server goes down.
+   -# The copy of the repository is compressed, making it about one-half the
+      size of the Subversion working copy.  If the working copy is converted
+      to a "bare" repository, the size goes down by another factor of 8 or
+      so.
+   -# The developer can perform the full life-cycle of version control
+      without a connection to the Subversion server:
+      -# Updates.
+         One can do updates without a connection to Subversion, but
+         branching and commits cannot be done.
+      -# Branching (local branches).
+         Branching under Git is fast and flexible.  Local branches can track
+         remote branches.
+      -# Commits.
+         One can happily commit often, and then <i>rebase</i> the commits
+         down to a single commit for check-in to Subversion.
+      -# Merges.
+         Git merges are said to be easier and more fool-proof than
+         Subversion merges.
+   -# Commits can be rebased to a simpler, linear change, suitable for
+      committing into the Subversion repository.
+
+The disadvantages of using Git to manage a Subversion repository:
+
+   -# An additional learning curve, with a slightly more complex (but
+      flexible) lifecycle.
+   -# Because of our chosen directory layout, Git cannot detect the existing
+      branches in Subversion from the top level of a repository such as
+      <code>dev</code>.  There is a way around this issue by cloning only
+      directories that have <code>branches</code>, <code>tags</code>, and
+      <code>trunk</code> directly under them, such as the
+      <code>project</code> directory.
+
+All in all, although the Git/Subversion bridge is most useful to a developer
+who is often unable to connect to our internal Subversion repository, it can
+be also useful to any developer, and provides a decent backup (of sorts) of
+the Subversion repository.
+
+\section git_svn_usage_summary Git/Subversion Usage Summary
+
+This section provides a complete outline of how to set up and use Git to
+manage a Subversion repository.  References to the details of each step are
+provided in this outline.
+
+   -# <code>git config --global ...</code>.
+      Set up your preferences for ignoring certain files, for coloring,
+      email, editors, diff programs, and more.  See
+      @ref git_svn_setup.  Some samples:
+      -# <code>git config --global core.excludesfile ~/.gitignores</code>.
+      -# <code>git config --global user.name "Chris Ahlstrom"</code> and much
+         more.  See @ref git_svn_features.
+   -# <code>git svn clone https://svnserver:443/svn/...</code>.
+      Create a Git archive (working copy) of a Subversion repository,
+      @ref git_svn_clone, or
+      a sub-project of the repository, @ref git_svn_clone_standard.
+      We restrict ourselves to
+      sub-projects that have the standard Subversion layout
+      (<code>trunk/branches/tags</code>).
+
+The process of using <i>Git</i> with <i>Subversion</i> is described in more
+detail in the following resources:
+
+   http://trac.parrot.org/parrot/wiki/git-svn-tutorial
+
+   http://progit.org/book/
+
+The latter URL also points to a way to get a paperback copy of the book.  We
+recommend it.
+
+\section git_svn_setup Setting Up Git
+
+Setting up Git requires the following processes:
+
+   -# <i>Installing Git</i>.
+      Installing Git depends on your Linux distribution or what Windows
+      packages you want to use.  Installation is beyond the scope of the
+      present document.
+   -# <i>Setting up 'git-ignores'</i>.
+      This process provides a list of files, file extensions, and directory
+      that you do not want Git to track.
+   -# <i>Setting up Git features</i>.
+      This process includes setting up preferred handling for:
+      -# Whitespace.
+      -# Line-endings.
+      -# Differencing code.
+      -# Merging code.
+      -# Programmer's editor.
+      -# Aliases for Git commands.
+      -# Colors.
+      -# And much more.
+
+These settings can be made system-wide, globally (for all Git archives under
+your control), on a single archive, and, I believe, even on a single
+directory.
+
+Here's a summary of one possible process for working with a Subversion
+repository:
+
+   -# <code>git svn clone https://svnserver:443/svn/dev</code>.
+      Fetch a copy of the repository.
+   -# <code>git clone --bare dev dev.git</code>.
+      If desired, convert it to a much smaller bare repository.
+   -# <code>git branch -a -v</code>.
+      View all branches (local and remote) of the new copy of the repository.
+      The <code>-v</code> option, if present, shows addition information.
+   -# <code>git svn fetch</code> or <code>git svn rebase</code>.
+      Get any changes from the Subversion repository; the latter also updates
+      your copy to HEAD.
+   -# <code>git add my_modified_files</code> and <code>git commit</code>.
+      Commit your modified (included by <i>git add</i>) files.
+   -# <code>git commit -a</code>.
+      The same as running the two commands in the previous step.
+      Note that each commit will be checked in as a separate Subversion
+      revision.
+   -# <code>git svn dcommit</code>.
+      Commit your local Git-committed changes to the Subversion repository.
+   -# <code>git branch</code> and <code>git checkout</code>.
+      Local branching.
+   -# <code>git svn rebase -i</code>.
+      Use an interactive rebase to combine a number of commits before
+      submitting them to Subversion.
+
+\subsection git_svn_ignores Setting Up Git-Ignores
+
+Building the code generates a lot of by-products that we don't want
+to end up in the repository.  This can happen if the <code>git add</code>
+command is used on a directory (as opposed to a file).
+
+First, look at <code>gitignores.txt</code> a verify that the file extensions all
+all to be ignored (not checked into source-code control), and that the list
+includes all such files you can conjur up.
+
+Next, copy <code>gitignores.txt</code> to the <code>.gitignores</code> file in your
+home directory.
+
+Finally, run
+
+\verbatim
+   $  git config --global core.excludesfile ~/.gitignores
+\endverbatim
+
+After this, your <code>.gitconfig</code> should look like this:
+
+\verbatim
+   [user]
+      name = Chris Ahlstrom
+      email = ahlstrom@bogus.com
+   [core]
+      excludesfile = /home/ahlstrom/.gitignore
+\endverbatim
+
+\subsection git_svn_features Setting Up Git Features
+
+There are additional configuration options.  Rather than discuss them, we
+will just list the commands and show the <code>~/.gitconfig</code> file that
+results.
+
+\verbatim
+   $ git config --global user.name "Chris Ahlstrom"
+   $ git config --global user.email ahlstrom@bogus.com
+   $ git config --global core.excludesfile ~/.gitignores
+   $ git config --global core.editor vim
+   $ git config --global color.ui true
+   $ git config --global diff.tool gvimdiff
+   $ git config --global alias.d difftool
+\endverbatim
+
+And this is the file that results:
+
+\verbatim
+[user]
+	name = Chris Ahlstrom
+	email = ahlstrom@bogus.com
+[core]
+	excludesfile = /home/ahlstrom/.gitignore
+	editor = vim
+[diff]
+	tool = gvimdiff
+[difftool]
+	prompt = false
+[alias]
+	d = difftool
+[color]
+	ui = true
+\endverbatim
+
+There are many more helpful configuration items, such as those that deal
+with OS-specific line-endings or the disposition of white space.
+
+\section git_svn_processes Git/Subversion Processes
+
+This section discusses various building blocks for operating on a
+repository.
+
+\subsection git_svn_clone Fetching a Copy of a Repository
+
+One can get a copy of a repository easily using the <code>git svn
+clone</code> command.  However, the disadvantage of this command is that
+one actually gets a working copy of the repository, with all of the code,
+and that can be a lot of data.
+See the next sections, \ref git_svn_clone_branch
+or \ref git_svn_clone_bare, for alternative setups.
+
+Getting a copy of a repository is a simple command, though it will take
+quite awhile to finish its work:
+
+\verbatim
+   $ git svn clone [-s] [-r M:N] https://svnserver:443/svn/dev
+\endverbatim
+
+The <code>-s</code> switch indicates that the standard <code>trunk</code>,
+<code>branches</code>, and <code>tags</code> layout is used by that URL.
+
+Although our repository has those directories in each sub-project, the
+top-level directory, <code>dev</code> does not,
+and so we cannot use that option for cloning
+the repository.  Thus, we cannot recover branch information; we can only get
+the documents themselves.
+Still, significant work can be done with this use case.
+
+The <code>-r</code> option restricts the checkout to a range of revisions.
+Getting all of them from <code>dev</code> takes about an hour and
+about 7.5 Gb of space, because Git has to check out and copy each revision.
+
+The command will initialize a new Git repository, and then fetch a working
+copy of the repository.  Then it will compress the Git blobs to save quite a
+bit of space.
+
+As each Subversion revision is extracted and fetched, information on it is
+shown.  For example:
+
+\verbatim
+r395 = 1c121cf3f6fcc4dd771134d682431e34cff7e2b7 (refs/remotes/xpc_original)
+\endverbatim
+
+The command will initialize a new Git repository, and then fetch a working
+copy of the repository.  Then it will compress the Git blobs to save quite a
+bit of space.
+
+As each Subversion revision is extracted and fetched, information on it is
+shown.  For example:
+
+\verbatim
+r395 = 1c121cf3f6fcc4dd771134d682431e34cff7e2b7 (refs/remotes/xpc_original)
+\endverbatim
+
+When this command completes, one can list all the branches that now exist
+for this Git repository.
+
+\verbatim
+   $ git branch -a
+   * master
+     remotes/git-svn
+\endverbatim
+
+Note that none of the Subversion branches can be seen, because
+<code>dev</code> does not have
+the standard <code>trunk</code>,
+<code>branches</code>, and <code>tags</code> layout.
+
+Because the branching history of this clone cannot be recovered, we do not
+recommend cloning the whole repository.  Instead, see
+\ref git_svn_clone_standard for cloning any single project, in the repository,
+that does have the standard Subversion <code>branches</code>,
+<code>tags</code>, and <code>trunk</code> layout.
+
+\subsection git_svn_clone_branch Fetching a Branch From a Repository
+
+This section covers two cases:
+
+   -# You want to fetch only a single branch from a repository.
+   -# You want to refresh your Git repository with a branch that was just
+      created using <code>svn copy</code>
+
+\subsubsection git_svn_clone_branch_exist Fetching an Existing Branch From a Repository
+
+This section very simply notes that one does not need to clone the whole
+repository... one can simply clone a subdirectory of it.  For example:
+
+\verbatim
+   $ git svn clone https://svnserver:443/svn/dev/project/branches/mysubproject/
+\endverbatim
+
+Fetching a whole branch is useful only when you aren't going to use Git or
+Subversion merging facilities to merge the branch back into the main trunk,
+and don't care about archiving information about the merge.
+For example, you might just want to clone the directory so that you can
+use Git to easily generate two different revisions of the directory for
+peer-review purposes.
+
+\subsubsection git_svn_clone_branch_new Fetching a New Branch From a Repository
+
+Let's say you've already got the complete repository in Git, and can see all
+the branches.
+
+Then someone adds a new branch, using <code>svn copy URL1 URL2</code>.  They
+tell you about it, and you do a <code>git branch -a</code>, but you do not see
+the new branch.  How do
+you get the branch visible 
+
+\verbatim
+   $ git svn fetch
+\endverbatim
+
+Git will tell you a little story about what it is doing, ending with this
+output:
+
+\verbatim
+   Successfully followed parent
+   r587 = 9c607e137c9ae27cb4027ef20c6c953bffed2484 (refs/remotes/bugfix_branch)
+\endverbatim
+
+Now <code>git branch -a</code> will show you that the new branch is present.
+You can then set up to track it:
+
+\verbatim
+   $ git checkout --track -b local/bugfix_branch remotes/bugfix_branch
+\endverbatim
+
+\subsection git_svn_clone_standard Cloning a Standard Subversion Layout
+
+Right now, a lot of our work is done in the <code>branches</code> directory of
+the <code>project</code> project.  That project <i>does</i> have a standard
+subversion layout, and we can clone that project and have access to the
+existing branches.
+
+This task can probably be done with <code>git svn clone</code>, but here we will
+break that command into <i>git init</i> and <i>git fetch</i> commands.
+
+First, make a directory to hold the new Git working directory, and change to
+it:
+
+\verbatim
+   $ mkdir project
+   $ cd project
+\endverbatim
+
+Second, initialize the Git repository, telling Git to use only the
+<code>project</code> project directory.  Otherwise, it will get the whole
+<code>dev</code> repository, which is not what we want.)
+Also tell Git that the directory has the standard Subversion layout.
+
+\verbatim
+   $ git svn init --no-minimize-url -s https://svnserver:443/svn/dev/project/
+\endverbatim
+
+This command results in a new hidden <code>.git</code> directory, inside the
+directory called <code>project</code>.
+
+Note the <code>-s</code> (standard Subversion layout) and
+<code>--no-minimize-url</code> (don't move up to the repository root)
+options.
+
+Next, get all of the repository data, including the branches and all of the
+revisions, with the following command.
+
+\verbatim
+   $ git svn fetch
+\endverbatim
+
+This will take awhile.  Once done, the working copy will have the
+latest copy of the Subversion <code>trunk</code>.  Since we have been working
+off the <code>branches</code>, this copy of the trunk is very old -- revision
+200, dated 08 Aug 2011.  At least it is small, only 268 Mb.
+We won't be using it.
+
+The following command and output shows that we're on the <i>master</i>,
+which is a copy of <code>trunk</code>.
+
+\verbatim
+   $ git status
+   # On branch master
+   nothing to commit (working directory clean)
+\endverbatim
+
+The following directory listing for the <code>project</code> directory verifies
+that it is a duplicate of <code>dev/project/trunk</code>:
+
+\verbatim
+   $ ls
+   Configuration Data  Production  Projects  README  Scripts  Tools
+\endverbatim
+     
+The following command will show all the branches of <code>project</code>:
+
+\verbatim
+   $ git branch -a
+   * master
+     remotes/xpc_bugfix
+     remotes/bugfix
+     remotes/mybranch
+     remotes/tags/Gold
+     remotes/tags/new_code
+     remotes/trunk
+\endverbatim
+
+\addindex switching branches, git
+\addindex git, switching branches
+
+At this point, we could create a new branch.  For this section, though,
+let's just look at an existing branch.  Run the following command from
+your new <code>project</code> directory:
+
+\verbatim
+   $ git checkout bugfix
+\endverbatim
+
+This command checks out around 6400 files (very quickly).  You can then
+verify that the contents match the current contents of <code>bugfix</code> in
+the Subversion archive.
+
+Now let's switch to a different branch.
+
+\verbatim
+   $ git checkout xpc_alternate
+\endverbatim
+
+This command is even faster, it just moves "HEAD" to
+the correct commit.
+
+You can then verify that the contents match the current contents of
+<code>xpc_alternate</code> in the Subversion archive.
+
+Then you can switch back to <code>bugfix</code> and verify
+that it again matches the Subversion archive.
+
+\addindex svn, switching branches
+\addindex switching branches, svn
+
+Note that the <code>git checkout</code> command is similar to the
+<code>svn switch</code> command.  Like <code>git checkout</code>, the Subversion
+<code>switch</code> command pulls in the differences needed to convert your
+current branch to the branch to which it is switching.  However, <code>svn
+switch</code> gets the changes from the repository, not locally, and shows the
+files being updated, so it is not as fast as <code>git checkout</code>.
+
+At this point, the advantages of Git branching over Subversion branching
+should be obvious:
+
+   -# <i>Fast branch switching</i>.
+      There's a lot less copying of data, and that copying is all
+      done locally.
+   -# <i>Clean directories</i>.
+      The directory structure is not littered with branch directories.
+
+However, there is a disadvantage to overcome.  After checking out a branch,
+we see what is called a "detached HEAD":
+
+\verbatim
+   $ git checkout bugfix
+   $ git branch -a
+   * (no branch)
+     master
+     remotes/xpc_bugfix
+     . . .
+     remotes/trunk
+\endverbatim
+
+The <code>(no branch)</code> item is tagged as the current branch.
+What this means is that, though we have the code for bugfix,
+we don't have a true branch name for it, because the branch we checked out
+is remote.
+We need a local branch name to work with.
+
+We need to create a new local branch that <i>tracks</i> the remote
+Subversion branch.
+
+There are two ways to do it.
+
+\verbatim
+   $ git branch --track local/bugfix remotes/bugfix
+   $ git checkout local/bugfix
+\endverbatim
+
+Or, in one command:
+
+\verbatim
+   $ git checkout -b local/bugfix remotes/bugfix
+\endverbatim
+
+Then we can see that we have a new local branch, <code>bugfix_2</code>, that
+tracks the remote branch, <code>bugfix</code>.
+
+Note the two variations of the command.
+The <code>local/</code> portion is a convention that some people use, and is
+optional.
+
+Another option (<i>BE CAREFUL, and study the meaning of this command online,
+first</i>) is:
+
+\addindex reset, --hard
+
+\verbatim
+   $ git reset --hard remotes/bugfix
+\endverbatim
+
+\verbatim
+   $ git checkout local/bugfix_2
+   $ git branch -a
+   * local/bugfix_2
+     master
+     remotes/mysubproject1
+     remotes/mysubproject2
+     remotes/mysubproject3
+     remotes/bugfix
+     . . .
+     remotes/trunk
+\endverbatim
+
+Normally, if we want to remind ourselves what branch we're in:
+
+\verbatim
+   $ git branch
+   * local/bugfix_2
+     master
+\endverbatim
+
+Now we can edit our code, and commit to the local Git repository
+(not to the remote Subversion repository) as often as we feel necessary:
+
+\verbatim
+   $ vi new_file.c
+   $ git add new_file.c
+   $ vi old_file_to_modify.c
+   $ git commit -a -m "Message about the commit."  
+\endverbatim
+
+If you want to combine a number of commits into one, in order to present a
+simpler history to Subversion, run this command:
+
+\addindex rebase
+
+\verbatim
+   $ git rebase -i
+\endverbatim
+
+Then follow the directions in the edit session that is entered.
+
+Also, it may recommend you use a command like the following, even though
+you've already set up tracking.
+
+\verbatim
+   $ git branch --set-upstream local/bugfix remotes/bugfix
+\endverbatim
+
+Once you've committed and rebased, you can finally commit to Subversion,
+doing a dry-run to double-check what will be dcommited, first:
+
+\verbatim
+   $ git svn dcommit --dry-run
+   $ git svn dcommit
+\endverbatim
+
+One more thing.  If you've edited other files in the meantime, the dcommit
+will fail because the index holding the modified files has not been updated.
+If you really do not want to commit these recently-changed file yet, then
+stash the modifications:
+
+\verbatim
+   $ git stash
+   $ git stash list
+   $ git svn commit
+   $ git stash apply
+\endverbatim
+
+The first command saves the modifications, and the second shows what is
+stashed.  The third command will no longer be aborted.
+
+The fourth command then brings back the modified files.
+
+\warning
+
+Be sure to study @ref git_svn_branching in order to fully understand
+handling Subversion branches.
+
+\subsection git_svn_clone_bare Making a "Bare" Copy of a Repository
+
+Once a repository has been cloned, it can be converted into a "bare"
+repository.  A bare repository does not have a working tree.  Rather, it has
+only the Git information and the archived documents.  Thus, it is a lot
+smaller.  Plus, it can be copied to a thumb drive so that someone else can
+clone it.
+
+Bare repositories are especially important for the common case of a remote
+repository used only as a push and pull source (i.e. not used directly for
+editing).
+
+The problem with a regular repository, created with <code>git svn clone</code>,
+that remote push and pull do affect with the working tree, and one gets
+a warning when pushing to a regular repository.
+
+We can avoid this by using a bare repository for the clone. However, in
+migrating from svn, the <code>git svn clone</code> always creates a working
+tree.
+
+The solution is to convert it to a bare repository after the cloning.
+
+First clone the repository as discussed in
+\ref git_svn_clone or, preferably
+\ref git_svn_clone_standard.
+Let's say we've done the latter, and have a project repository.
+Then convert it to a bare repository by cloning its <code>.git</code> hidden
+directory:
+
+\verbatim
+   $ git clone --bare project/.git project.git
+\endverbatim
+
+Note that, by convention, bare repositories always have the extension
+<code>.git</code>.
+
+Then you can clone this bare repository in another working area in order to
+get an editable version.
+
+\verbatim
+   $ git clone /path/to/project.git
+\endverbatim
+
+This results in a new project directory that has the source code in editable
+format.
+
+Some things to note:
+
+   -# The bare repository is <i>much</i> smaller than the cloned working
+      copy.  For example, the cloned <code>dev</code> repository is
+      about 8 Gb in size, while the bare repository, containing basically
+      the same information, is only about 400 Mb in size.
+   -# You don't have to clone a whole repository, even for doing work on it.
+      You can clone subdirectories as well.
+   -# You can copy the whole <code>project.git</code> bare repository to another
+      machine, either via the network or via a USB stick.
+      You can use that remote copy as a private repository that can be
+      accessed only by people that have accounts on that machine.
+      http://gitref.org/remotes/ explains how to keep your various copies of
+      the repository in synch using <code>git push</code>, <code>git pull</code>,
+      and <code>git remote</code>.
+   -# However, at this time, using a remote repository to synch with a
+      Subversion repository is beyond the scope of this document.
+      This document assumes you will interact only with the local repository
+      you created to interact directly with the Subversion repository.
+
+Some things to note:
+
+   -# The bare repository is <i>much</i> smaller than the cloned working
+      copy.  For example, the cloned dev repository is about 8
+      Gb in size, while the bare repository, containing basically the same
+      information, is only about 400 Mb in size.
+   -# You don't have to clone a whole repository, even for doing work on it.
+      You can clone subdirectories as well.
+
+\subsection git_svn_rebase Rebasing (Updating) from the Repository
+
+The following command pulls in any changes that were made to the Subversion
+repository since the repository was first cloned or last updates.
+
+\verbatim
+   $ git svn fetch
+\endverbatim
+
+The following command does the above, and it
+also sets the revision to the HEAD revision.
+
+\verbatim
+   $ git svn rebase
+\endverbatim
+
+These commands are analogous to <code>svn update</code>.
+The latter command is generally the one you want to use.
+
+Note that this rebasing cannot be done with outstanding local changes in
+place.  The changes have to be <i>add</i>ed to the Git index, and then have
+to be <i>commit</i>ted to Git.  Then rebasing can be performed.
+
+An alternative is to temporarily stash the modifications:
+
+\verbatim
+   $ git stash
+   $ git svn commit
+   $ git stash apply             (or pop)
+\endverbatim
+
+Git's stash feature actually uses a stack, so that more than one set of
+stashes can be made.  See <code>git help stash</code>.
+
+\subsection git_svn_dcommit Committing Local Changes to the Repository
+
+Unlike in Subversion, local changes to a file are not seen by Git until the
+developer makes them visible by doing a local <i>add</i>.
+Once visible to Git, the changes can be <i>commit</i>ted.
+
+This feature is a great way to avoid having accidental edits committed,
+without having to remember to <i>revert</i> the accidental changes.
+
+Also unlike Subversion, committed changes are not seen by the remote
+(original) repository, until the commits are <i>pushed</i> to the
+repository.
+
+When a file is changed (whether modified, added, or deleted),
+git requires the following command to make the change visible to Git,
+and then, if the changes are still thought to be good, commit them:
+
+\verbatim
+   $ git add <the_modified_files>
+   $ git commit -m "Message...."
+\endverbatim
+
+You can combine adding the changes with committing them, if the files are
+merely modified:
+
+\verbatim
+   $ git commit -a -m "Message...."
+\endverbatim
+
+These changes are still local.  They need to be <i>pushed</i> to the
+Subversion repository.  This command will also bring your local copy
+up-to-date:
+
+\verbatim
+   $ git svn dcommit
+\endverbatim
+
+If conflicts occur, you have to first rebase the remote changes on top of
+your local changes:
+
+\verbatim
+   $ git svn rebase
+\endverbatim
+
+It's generally better to make sure your local repository is clean, though.
+
+Also note that, for each time that you run <code>git commit</code>, a new
+Subversion revision will result.  So, if you then the commit command five
+times, then <code>git svn dcommit</code> will record five new revisions into
+Subversion.
+
+If you want to combine a number of commits into one, in order to present a
+simpler history to Subversion, run this command:
+
+\verbatim
+   $ git rebase -i
+\endverbatim
+
+Then follow the directions in the edit session that is entered.
+Basically, you will leave the first commit as a <code>pick</code>, and change
+the rest of them to a <code>squash</code>.  Google will show you more use cases
+for <i>interactive rebasing</i>.
+
+\subsection git_svn_branching_local Handling Local Branching
+
+Creating local branches in Git is a good way to work without interfering
+with the work of others.
+
+\verbatim
+   $ git checkout master
+   $ git branch new_feature
+   $ git checkout new_feature
+\endverbatim
+
+These commands make a local branch off the <code>master</code> branch,
+and call it <code>new_feature</code>.
+Changes committed to this branch that won't affect your master branch.
+One can switch back and forth between the local branch and the master
+branch.
+
+This branch is connected to the trunk of the
+Subversion repository, so any changes dcommitted from this branch will
+be merged into the Subversion trunk and appear in the local trunk
+the next time <code>git svn rebase</code> is run, when the trunk
+is checked out. 
+
+We generally will not be using the <code>trunk</code> workflow.
+
+\subsection git_svn_diffing Diff'ing Code
+
+The cool thing about having a local Git repository is that your work can
+continue, even when the network is down.  For example, if you need to
+peer-review some changes, you can do so even if there is no access to the
+Subversion server, as long as you rebased from the Subversion archive in
+time.
+
+Doing differences is straightforward, but the output of the
+diff-tool built into Git is not really suitable for human consumption.
+So the first thing to do is set up Git to use your favorite diff-tool.
+It is easiest to set up to use certain well-known open-source tools, such as 
+<i>vimdiff</i> and <i>kdiff3</i>, but you can set up for other tools using a
+wrapper script.
+
+We've set up <i>gvimdiff</i>, as shown in this section of
+<code>~/.gitconfig</code>:
+
+\verbatim
+[diff]
+	tool = gvimdiff
+[difftool]
+	prompt = false
+[alias]
+	d = difftool
+\endverbatim
+
+The <code>d</code> alias merely allows one to save a little typing time --
+instead of type <code>git difftool ...</code>, one can type <code>git d
+...</code>.
+
+So now you want to review a branch of code that you've already obtained by a
+<code>git svn rebase</code>.  The author of the changes has provided the
+name of the branch and the beginning and ending revision numbers.  Let's
+assume the location of the branch on your system is <code>BRANCH</code>,
+which might have a value of
+<code>~/git/dev/project/branches/mysubproject</code>.
+
+Run the following command to get a list of all the revisions that affected
+that path:
+
+\verbatim
+   $ git log $BRANCH > changes.log
+\endverbatim
+
+Then review <code>changes.log</code> to find the revisions.  For example, search
+for "@531".  You might find something like this:
+
+\verbatim
+commit 5890c2d148f5ca7ecd2f82c34d3b583e60ed2a62
+Author: ahlstrom <ahlstrom@aa7f1e7f-25a7-d04a-8b77-338273dbcc93>
+Date:   Tue Apr 1 19:37:10 2012 +0000
+
+    git-svn-id: https://svnserver:443/svn/dev@531
+       aa7f1e7f-25a7-d04a-8b77-338273dbcc93
+\endverbatim
+
+Grab the <code>commit</code> number.  You only need the first few values, if
+they uniquely specify a commit number.
+
+Get the commit numbers for the range of revisions.  Use them in one of the
+following commands:
+
+\verbatim
+   $ git difftool 5890c2d148f5ca7ecd2f82c34d3b583e60ed2a62 85663ad65b198a80b469ea8b5ed19ff9353dfe40
+\endverbatim
+
+\verbatim
+   $ git difftool 5890c2d1 85663ad6
+\endverbatim
+
+The result is that each file change is brought up, serially, in
+<code>gvimdiff</code>, and is easily examined, thanks to the very colorful output
+of that diff-tool and its feature of line-folding.
+
+The comparable command in Subversion would be
+
+\verbatim
+   $ svn diff -r 604:610 --diff-cmd svndiff
+\endverbatim
+
+where <code>svndiff</code> is a script that rearranges command-line arguments
+to a program like <i>gvimdiff</i> so that it properly compares the two
+versions of each file.
+
+\subsection git_svn_branching Creating Remote Subversion Branches
+
+\ref git_svn_clone_standard talks about setting up a bridge to a Subversion
+project having the standard trunk/branches/tags layout, handling branches
+that are already in place.  This section goes into more detail, and shows
+how to create Subversion branches using the git interface.
+
+   -# Start Subversion branch in Git.
+\verbatim
+      $ git svn branch -m "Branch for bug fixes" local/bugfix
+      $ git checkout --track -b local/bugfix_2 remotes/bugfix
+      $ git reset --hard remotes/bugfix   -or-
+      $ git svn rebase
+      $ (now you can happily hack on your code)
+      $ (git commit, git commit --amend, git rebase -i HEAD~10, etc.)
+\endverbatim
+      <code>_2</code> is appended to <code>bugfix</code> to avoid warning from
+      Git about ambiguity.  Could prepend <code>local/</code> to it instead.
+      The <i>reset</i> command discards any local file modifications and
+      also resets the Git index (staging area).
+   -# dcommit to Subversion.
+      The <code>--dry-run</code> option checks that it will commit to
+      the proper Subversion branch:
+\verbatim
+      $ git svn dcommit --dry-run
+      Committing to https://svnserver:443/svn/.../project/branches/bugfix_branch ...
+      $ git svn dcommit
+\endverbatim
+   -# Merging trunk into branch.
+\verbatim
+      $ git checkout master
+      $ git svn rebase
+      $ git checkout local/bugfix_2
+      $ git merge --squash master
+      $ git commit -m "Bring branch up-to-date with trunk" 
+\endverbatim
+   -# Merging branch back to trunk.
+\verbatim
+      $ git checkout master
+      $ git svn rebase
+      $ git merge --squash local/bugfix_2
+      $ git commit -m "Merge branch into trunk" 
+\endverbatim
+
+We won't generally be using the trunk in it, though, so see
+\ref git_svn_branching_cross for more information.
+
+Warnings:
+
+   -# Don't try to rebase already-dcommited changes.
+      They do not belong to you anymore. 
+   -# Always run "git svn dcommit --dry-run" before real commit to check in
+      which branch your changes will be committed. 
+   -# Always merge branches with "--squash". Otherwise git-svn will do it for
+      you and can epic-fail sometime. 
+   -# Although Subversion 1.5 and later can track merges, don't try to merge
+      branches with pure svn and git-svn on same branch. 
+
+See http://trac.parrot.org/parrot/wiki/git-svn-tutorial for detailed
+information on how to handle branching in git-svn.
+
+Also see http://utsl.gen.nz/talks/git-svn/intro.html#howto, which adds how to
+get incredible project compression with Git.
+
+\subsection git_svn_branching_cross Merging Between Branches
+
+In the Subversion archive, we don't really use <code>trunk</code> much (the
+last revision in it is currently <code>r200</code>).
+
+Instead, we're using <code>mybranch</code> as a kind of provisional trunk.
+We create bug-fix branch by doing an <code>svn copy</code> of the
+<code>mybranch</code> URL.
+Then we do our editing and testing on the branch.
+Finally, we merge the branch into the <code>mybranch</code> directory,
+verify it, and then commit it.
+
+This section explains how to do this process using the Git/Subversion
+bridge.  It assumes that you have either
+tracked and checked out an existing branch as discussed in
+\ref git_svn_clone_standard or have created a Subversion branch using Git as
+discussed in @ref git_svn_branching.
+
+You have already edited your code, tested it, and have committed it back to
+the branch.  For this example, the local branch is called
+<code>bugfix_2</code>, and it tracks the remote Subversion branch
+<code>bugfix</code>.
+
+Now you want to somehow merge the changes from <code>bugfix</code>
+into <code>mybranch</code>.
+
+We already have the local branch <code>bugfix_2</code>.
+We need a local branch to trach the remote branch <code>mybranch</code>:
+
+\verbatim
+   $ git checkout --track -b local/mybranch remotes/mybranch
+\endverbatim
+
+Generally, it may be awhile before you actually do the merge, so you want to
+make sure that <code>mybranch</code> and <code>bugfix_2</code> are
+up to date:
+
+\verbatim
+   $ git checkout local/bugfix_2
+   $ git svn rebase
+   $ git checkout local/mybranch
+   $ git svn rebase
+\endverbatim
+
+We're not ready to merge just yet.  We want to get an idea of the amount of
+merging and what will be merged.  First, get a summary of the differences
+between our working branch, <code>local/bugfix_2</code>, and our merge
+destination, <code>local/mybranch</code>.
+
+\verbatim
+   $ git checkout local/bugfix_2
+   $ git diff --name-status local/mybranch > diffs.txt
+\endverbatim
+
+Examing <code>diffs.txt</code> will give you an idea of how many
+and which files were modified, added, or deleted.
+
+If you want a more detailed look, then use your diff-tool:
+
+\verbatim
+   $ git checkout local/bugfix_2
+   $ git difftool local/mybranch
+\endverbatim
+
+The <code>local/mybranch</code> files appear in the left pane of your
+diff-tool, and the <code>local/bugfix_2</code> changes will appear in the
+right pane of the diff-tool.
+
+We're ready to merge (locally) <code>local/bugfix_2</code> into
+<code>local/mybranch</code>.
+We set the destination branch as the current
+checkout, and then do the merge:
+
+\verbatim
+   $ git checkout local/mybranch
+   $ git merge --squash local/bugfix_2
+\endverbatim
+
+You will likely get a list of <i>CONFLICTS</i>.
+Edit each of the flagged files to remove the conflict and the conflict
+markers (just as in Subversion).
+Then tell Git they are resolved:
+
+\verbatim
+   $ git add file1.c file2.c ...
+\endverbatim
+
+If the conflict occurs because a file was removed, use:
+
+\verbatim
+   $ git rm file.dll
+\endverbatim
+
+Then commit all of the changes, whether due to the merge or due to the
+resolution of conflicts.
+
+\verbatim
+   $ git commit -a -m "Made merge and resolved merge conflicts."
+\endverbatim
+
+We've merged our bug-fixes into the local mybranch branch.
+Now we need to see that they took.  You may need to set the upstream first,
+even though <code>mybranch</code> already
+tracks <code>remotes/mybranch</code>.
+
+\verbatim
+   $ git branch --set-upstream mybranch remotes/mybranch
+   $ git rebase
+\endverbatim
+
+Now do a dry run of dcommit to be sure it will be committed to the
+Subversion <code>mybranch</code> branch.
+Then actually do the commit.
+
+\verbatim
+   $  git svn dcommit --dry-run
+   Committing to https://svnserver:443/svn/dev/project/branches/mybranch ...
+   $  git svn dcommit
+\endverbatim
+
+\section git_svn_other_commands Other Useful Commands and Workflows
+
+This section presents brief and to-the-point commands for various workflows
+and actions.
+
+\subsection git_svn_other_svn_merge Merging Subversion Branches Through Git
+
+Here, we're assuming that one has cloned a Subversion repository as per
+\ref git_svn_clone_standard.  Then one has created a Subversion branch,
+using either Subversion or the methods of @ref git_svn_branching.
+So now one wants to make some edits and local commits on the branch, and
+then merge them into another branch, and make sure that the merge is
+properly committed to the Subversion repository.
+
+\verbatim
+    1. $ git checkout --track -b local/bugfix_branch remotes/bugfix_branch
+    2. $ git svn rebase
+    3. $ git commit ...
+    4. $ git rebase -i
+    5. $ git svn dcommit
+    6. $ git checkout --track -b local/mybranch remotes/mybranch
+    7. $ git svn rebase
+    8. $ git diff local/mybranch local/bugfix_branch
+    9. $ git branch
+   10. $ git merge --squash --no-commit local/bugfix_branch
+   11. $ git status
+   12. $ git commit -m "Merged bugfix_branch into mybranch."
+   13. $ git rebase -i             [optional]
+   14. $ git svn dcommit --dry-run
+   15. $ git svn dcommit
+\endverbatim
+
+   $ git branch --set-upstream local/bugfix_branch remotes/bugfix_branch
+
+Here's what each step does:
+
+   -# Create a new branch called <code>local/bugfix_branch</code>, have it track
+      the existing Subversion branch <code>remotes/bugfix_branch</code>, and check
+      out that branch.  Verify using <code>git branch</code>.
+   -# Fetch and merge any changes in the branch, to be up-to-date.
+   -# After each round of editing, commit your code to that branch.  Note
+      that it is committed locally.
+   -# If desired, rebase interactively to reorganize your commits for
+      Subversion.
+   -# Commit all the changes to Subversion's version of the branch.  This
+      can be helpful in case you mess up later.
+   -# Create a new branch called <code>local/mybranch</code>, have it
+      track the existing Subversion branch <code>remotes/mybranch</code>,
+      and check out that branch.  Verify using <code>git branch</code>.
+   -# Fetch and merge any changes in that branch, to be up-to-date.
+   -# Preview the changes made in <code>local/bugfix_branch</code> relative to the
+      branch we want to merge into.  If set up, you can replace
+      <code>diff</code> with <code>difftool</code> (e.g. I use <i>gvimdiff</i> to
+      view the differences between two files.)  You can also use the
+      <code>--name-only</code> option to get a simple list of files that
+      changed.
+   -# Verify you are on the <code>local/mybranch</code> branch, the
+      destination of the merge.
+   -# Merge the <code>local/bugfix_branch</code> branch into the current branch
+      without committing the changes or moving the <code>HEAD</code>.
+      You will want to resolve conflicts, perform spot checks, or perhaps
+      even make a few additional edits at this point.
+   -# Verify that only the files desired, and all of them,
+      are staged for commit.  Use <code>git add</code> to stage any desired
+      files that are not yet staged.
+   -# If all is well, commit the merge.
+   -# If desired, interactively rebase the merge to combine commits.
+   -# Verify that the merge changes will go to the expected Subversion
+      repository.
+   -15 Push the merge changes to Subversion.
+
+After doing all that, it pays to go to the destination directory
+(<code>mybranch</code>) in a regular Subversion workarea and do
+an <code>svn update</code> to verify that all the files make it, and there are
+no conflicts.  If there are conflicts, you probably want to resolve them
+with commands like the following:
+
+\verbatim
+   $ svn resolve --accept=theirs-full Projects/libs/libatis/po/Makefile.am
+\endverbatim
+
+If you do make more changes, be sure to be back to
+<code>local/mybranch</code> and run <code>git svn rebase</code> to keep your
+local branch up-to-date.
+
+\subsection git_svn_other_ahead "Your branch is ahead..."
+
+Let's say you issue the following command and see the following output:
+
+\verbatim
+   $ git status
+   # On branch local/bugfix_branch
+   # Your branch is ahead of 'bugfix_branch' by 1 commit.
+\endverbatim
+
+In normal circumstances, this simply means that you have not yet run the
+following command to get the Subversion archive up-to-date with the changes
+you committed in git.  Therefore, you just need to commit to Subversion:
+
+\verbatim
+   $ git svn dcommit
+\endverbatim
+
+\subsection git_svn_other_gc Git Garbage Collection
+
+Run the following command in your Git repository, once in awhile, to keep it
+working fast.  It makes sure that objects are packed together to increase
+the speed of accessing them.
+
+\verbatim
+   $ git gc
+\endverbatim
+
+This command re-compacts the data in your repository.
+Normally, git runs this command automatically every so often.
+
+\section git_svn_tables Feature Tables
+
+Constructed from:
+
+   http://git.or.cz/course/svn.html
+
+<table>
+
+   <tr>
+      <th> Function </th>
+      <th> Git </th>
+      <th> Subversion </th>
+   </tr>
+
+   <tr>
+      <td> Creating a new repository </td>
+      <td>
+         git init <br>
+         git add . <br>
+         git commit
+      </td>
+      <td>
+         svnadmin create REPO <br>
+         svn import file://REPO
+      </td>
+   </tr>
+
+   <tr>
+      <td> Track a project stored at URL </td>
+      <td> <code>git clone URL</code> </td>
+      <td> <code>svn checkout URL</code> </td>
+   </tr>
+
+   <tr>
+      <td> Track latest from the current project </td>
+      <td> git pull </td>
+      <td> svn update </td>
+   </tr>
+
+   <tr>
+      <td> Committing changes to edited documents </td>
+      <td> git commit -a </td>
+      <td> svn commit </td>
+   </tr>
+
+   <tr>
+      <td> Checking changes </td>
+      <td> git diff </td>
+      <td> svn diff | less </td>
+   </tr>
+
+   <tr>
+      <td> Checking changes more specifically </td>
+      <td> git diff REV PATH </td>
+      <td> svn diff -rREV PATH </td>
+   </tr>
+
+   <tr>
+      <td> Applying a patch created by the VCS </td>
+      <td> git apply </td>
+      <td> patch -p0 </td>
+   </tr>
+
+   <tr>
+      <td> Obtaining project status </td>
+      <td> git status </td>
+      <td> svn status </td>
+   </tr>
+
+   <tr>
+      <td> Obtaining project status </td>
+      <td> git status </td>
+      <td> svn status </td>
+   </tr>
+
+</table>
+
+\section git_svn_references References
+
+   -# http://stackoverflow.com/questions/871/why-is-git-better-than-subversion
+      A wide-ranging discussion comparing Git and Subversion
+   -# http://whygitisbetterthanx.com/#svn
+      Lists the advantages of Git.  Performances comparisons, sample
+      workflows, and other diagrams.
+
+ */
+
+/*
+ * xpc_git-subversion-bridge.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

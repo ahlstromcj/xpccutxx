@@ -1,0 +1,41 @@
+#******************************************************************************
+# xpc_suite-1.1/po/README
+#------------------------------------------------------------------------------
+##
+# \file        README
+# \author      Chris Ahlstrom
+# \date        2008-05-08
+# \update      2012-01-02
+#
+#------------------------------------------------------------------------------
+
+This file describes the po directory of the XPC library project.
+
+Some of these files are from the GNU "Hello World" sample project.
+We'll clean out the junk files someday.
+
+One item we want to note, for future reference is the debian package
+"iso-codes (0.52-1":
+
+   http://packages.debian.org/testing/misc/iso-codes
+
+   ISO language, territory, currency codes and their translations
+
+   This package provides the ISO-639 Language code list, the ISO-4217
+   currency list, the ISO-3166 Territory code list, and ISO-3166-2
+   sub-territory lists.
+
+   It also (more importantly) provides their translations in .po form.
+
+For information on using gettext, see
+
+   http://www.gnu.org/software/gettext/
+
+The complete process of internationalization is detailed in our Doxygen
+documentation.
+
+#*****************************************************************************
+# README (po)
+#-----------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#-----------------------------------------------------------------------------

@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libxpccut", "libxpccut.10.vcxproj", "{C888060A-E583-4C2A-81AE-5E86505CDBB6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit_test_test", "unit_test_test.10.vcxproj", "{4D319800-AD85-4C5E-B9C1-315316EDC1AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C888060A-E583-4C2A-81AE-5E86505CDBB6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C888060A-E583-4C2A-81AE-5E86505CDBB6}.Debug|Win32.Build.0 = Debug|Win32
+		{C888060A-E583-4C2A-81AE-5E86505CDBB6}.Release|Win32.ActiveCfg = Release|Win32
+		{C888060A-E583-4C2A-81AE-5E86505CDBB6}.Release|Win32.Build.0 = Release|Win32
+		{4D319800-AD85-4C5E-B9C1-315316EDC1AC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4D319800-AD85-4C5E-B9C1-315316EDC1AC}.Debug|Win32.Build.0 = Debug|Win32
+		{4D319800-AD85-4C5E-B9C1-315316EDC1AC}.Release|Win32.ActiveCfg = Release|Win32
+		{4D319800-AD85-4C5E-B9C1-315316EDC1AC}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

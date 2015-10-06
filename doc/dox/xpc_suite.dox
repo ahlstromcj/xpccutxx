@@ -1,0 +1,179 @@
+/**
+ * \file       xpc_suite.dox
+ *
+ *    This file provides an overview of all of the projects in the <b>XPC</b>
+ *    suite of projects.
+ *
+ * \library    xpc_suite
+ * \mainpage   XPC Suite of Libraries and Sample Applications
+ * \author     Chris Ahlstrom
+ * \date       2011-12-17
+ * \update     2015-10-05
+ * \license    $XPC_SUITE_GPL_LICENSE$ (See \ref xpc_suite_license_subproject)
+ *
+ *//**
+
+\section xpc_suite_intro Introduction
+
+The <b>XPC</b> library suite is a collection of "cross-programming"
+<b>C</b> libraries.
+
+The "XPC suite" is a set of very basic libraries (and some simple
+applications) intended to be useful and instructive.
+
+The libraries provide functionality to help in error-logging, debugging,
+threading, numerics, internationalization, and unit-testing.
+
+In addition, the code and other project files attempt to be complete
+examples of how to document, write, format, build, and unit-test a
+project.
+
+The current document might not include the API documentation.  It may
+just give an overview of the project, and tutorials about using various
+open-source and Free software tools to perform maintenance tasks.
+
+\section xpc_suite_intro_doc A Note About XPC Documentation
+
+The documentation for the <b>XPC</b> suite is generated using the very
+nice <i>Doxygen</i> package.  This is a <i>Free software</i> package
+available at
+
+   http://www.stack.nl/~dimitri/doxygen/
+
+This package works by allowing the user to mark up source code so that
+formal and detailed documentation can be regenerated from comments in the
+code.
+
+For our purpose, we also provided stand-alone documents that end in the
+file-extension <code>.dox</code>.  Each such document provides a named page
+of documentation.  This documentation is collected by running
+<i>doxygen</i> from the main documentation directory in
+<code>xpc_suite/doc/dox</code>.
+
+In order to build good <code>PDF</code> files from <i>doxygen</i>, we believe
+that the following packages are necessary.  This list
+may err on the side of being too long.
+The names may differ depending on what distribution
+one uses.
+
+   -  <code>doxygen-latex</code>
+   -  <code>texlive</code>, and the following related packages
+      - <code>texlive-base</code>
+      - <code>texlive-binaries</code>
+      - <code>texlive-common</code>
+      - <code>texlive-extra-utils</code>
+      - <code>texlive-font-utils</code>
+      - <code>texlive-generic-recommended</code>
+      - <code>texlive-latex-base</code>
+      - <code>texlive-latex-recommended</code>
+      - <code>texlive-latex3</code>
+      - <code>texlive-luatex</code> (maybe)
+      - <code>texlive-metapost</code> (maybe)
+   -  <code>psutils</code>
+      
+Note that you do \e not need a <code>texlive-full</code> package.  It is \e
+huge!
+
+\note
+One issue is ordering the documentation pages in a more
+logical fashion; currently, they appear in the <code>PDF</code> in whatever
+order they are encountered in the directories.
+To get around this, every document is specified, in the desired order,
+in the <code>doxytop.cfg</code> file.
+
+\section xpc_suite_xpc_summaries XPC Libraries in Summary
+
+The following sections quickly describe each of the sub-projects of the
+<b>XPC</b> suite.  Here are the libraries, and their current status:
+
+<table>
+   <tr> 
+      <th> Name </th>
+      <th> Library </th>
+      <th> Status </th>
+   </tr>
+   <tr> 
+      <td> XPC CUT Library </td>
+      <td> xpccut-1.1 </td>
+      <td> Complete, self-unit-tested, very usable </td>
+   </tr>
+   <tr> 
+      <td> XPC C Library </td>
+      <td> xpc-1.1 </td>
+      <td> Complete, unit-tested, usable </td>
+   </tr>
+</table>
+
+\subsection xpc_suite_xpccut XPC CUT Library Summary
+
+The <b>XPC CUT</b> library (libxpccut) is a <b>C</b> unit-test library.
+
+The <b>CUT</b> library provides a simple framework for unit-testing
+using only the <b>C</b> programming language.  This library provides a
+fairly easy way to write unit-tests that are:
+
+   -  As limited or as thorough as you like.
+   -  Self-documenting, and capable of creating a log of the test.
+   -  Able to be used as regression tests.
+   -  Easy to debug.
+
+The <b>CUT</b> library is not meant to take the place of complex test
+suites such as <i>CppUnit</i>.  It just provides an easy way to write
+unit-tests and group them together.  It also provides an easy way to
+break each unit-test into a number of simpler sub-tests, and to find out
+which sub-test fails.  It provides for timing the tests, controlling
+the amount of output to the screen, interactive versus non-interactive
+usage, and more.
+
+The developer writes a set of test-cases that follow a simple function
+signature.  The developer then instantiates a unit-test object and loads
+each test case into it.  The run of the tests is then kicked off.
+
+The fundamental result of the unit-test application is a single status
+value:  0 (all tests and sub-tests passed) or 1 (at least one test or
+sub-test failed.)
+
+The <b>XPC CUT C</b> library has no dependencies on any other
+<b>XPC</b> libraries.
+
+For a full description of the <b>CUT</b> library,
+see \ref xpccut_introduction_page.
+
+\subsection xpc_suite_xpc XPC C Library Summary
+
+The <b>XPC C</b> library (libxpc) is a <b>C</b> library that provides
+functionality useful in most projects.
+
+   -  CPU and operating system identification
+   -  Error and message logging
+   -  GNU gettext support
+   -  Numeric support
+   -  Some minor command-line options handling
+   -  Basic INI-file parsing
+   -  Support for using pthreads.
+   -  Other portability functions.
+
+For a full description of the <b>XPC C</b> library,
+see \ref xpc_utility_introduction.
+
+\section xpc_suite_license License Terms for the XPC Suite
+
+   See \ref xpc_suite_license_subproject for a description of all of the
+   <b>XPC</b> suite licensing.
+
+\section xpc_suite_references References
+
+   None.
+
+\section xpc_suite_unknown_page Incomplete Section
+
+   Since you're reading this section, you undoubtedly clicked a link to a
+   document or section that is not yet written.  My apologies.
+
+ */
+
+/*
+ * xpc_suite.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

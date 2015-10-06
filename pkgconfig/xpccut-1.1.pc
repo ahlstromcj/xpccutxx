@@ -1,0 +1,73 @@
+#*****************************************************************************
+# xpccut-1.1.pc.in
+#-----------------------------------------------------------------------------
+##
+# \file       	xpccut-1.1.pc.in
+# \library    	libxpccut
+# \author     	Chris Ahlstrom
+# \date       	2008-05-08
+# \updates    	2015-10-05
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#     Provides a pkg-config file for any library in the XPC library suite.
+#
+#     This file is a pkg-config file describing the libxpccut library, API
+#     version 1.1.  Generates the file xpccut-1.1.pc, which will be installed
+#     in /usr/local/lib/pkgconfig/xpccut-1.1.pc.in.
+#
+#     Access it using the command
+#
+#        pkg-config --cflags xpccut-1.1                  [compiler flags]
+#        pkg-config --libs xpccut-1.1                    [linker flags]
+#
+#     The pkg-config(1) man page discusses how to use the PKG_CHECK_MODULES
+#     macro in your configure.ac file to provide macros to add to the LIBS
+#     and CFLAGS definitions.
+#
+#     Note that the name of the individual library package is not used as
+#     the installation directory-name.  Since we have more than one related
+#     library, we use a common directory name, xpc-1.1, instead, to collect
+#     all our libraries in one place.  BUt we still need a unique *.pc file
+#     for each library.
+#
+# \references
+#     -  http://www.openismus.com/documents/linux/building_libraries
+#           /building_libraries.shtml
+#
+#     Also see the README file in this directory for a real-life story about
+#     using pkgconfig.
+#
+# \notes
+#     -  These are standard, but not used below.  Instead, we define the xpc
+#        variable used below in the xpccut configure.ac file.
+#
+#           libdir=${exec_prefix}/lib
+#           includedir=${prefix}/include
+#
+#     -  I don't think we need to specify libdir here:
+#
+#           Libs: -L${libdir} -L${xpclibdir} -lxpccut
+#
+#-----------------------------------------------------------------------------
+
+prefix=/usr/local
+exec_prefix=${prefix}
+xpcincludedir=${prefix}/include/xpc-1.1
+xpclibdir=${exec_prefix}/lib/xpc-1.1
+
+Name: xpccut
+Description: Cross-Platform C Unit Test Library
+Version: 1.1
+URL: https://github.com/ahlstromc/xpccut++
+Requires:
+Conflicts:
+Libs: -L${xpclibdir} -lxpccut
+Libs.private: -lpthread -lm
+Cflags: -I${xpcincludedir}
+
+#******************************************************************************
+# xpccut-1.1.pc.in
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=automake
+#------------------------------------------------------------------------------

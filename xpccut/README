@@ -1,0 +1,10 @@
+"README" for the XPC CUT C unit-test library (libxpccut).
+Chris Ahlstrom
+2015-10-05 to 2015-10-05
+
+This project provides a library for some very basic, very helpful
+unit-test functions, suitable for both C and C++ projects.
+
+This project is meant for developers.
+
+# vim: ts=3 sw=3 et ft=sh

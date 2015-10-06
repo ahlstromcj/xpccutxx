@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+#*****************************************************************************
+# test_script (cut++/tests)
+#-----------------------------------------------------------------------------
+##
+# \file       	test
+# \library    	libxpccut++
+# \author     	Chris Ahlstrom
+# \date       	2008-04-02
+# \updates    	2015-10-05
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#     Runs some combinations of options that can have erroneous side-effects
+#     that break the unit tests.
+#
+#  TODO:
+#
+#     These tests /still/ generate errors.
+#
+#-----------------------------------------------------------------------------
+
+ERROR_OCCURRED="no"
+LOG_FILE="test_errors"
+
+touch $LOG_FILE
+
+./cut_unit_test --silent
+
+if [ $? != 0 ] ; then
+   echo "? --silent test of cut_unit_test failed" >> $LOG_FILE
+fi
+
+./cut_unit_test --hide-errors 1> /dev/null 2> /dev/null
+
+if [ $? != 0 ] ; then
+   echo "? --hide-errors test of cut_unit_test failed" >> $LOG_FILE
+fi
+
+./cut_unit_test --interactive --group 2 --case 10 --response-before c --response-after f 1> /dev/null 2> /dev/null
+
+if [ $? == 0 ] ; then
+   echo "? --interactive failure test of cut_unit_test failed" >> $LOG_FILE
+fi
+
+./cut_unit_test --interactive --group 2 --case 10 --response-before c --response-after p 1> /dev/null 2> /dev/null
+
+if [ $? != 0 ] ; then
+   echo "? --interactive pass test of cut_unit_test failed" >> $LOG_FILE
+fi
+
+./cut_unit_test --no-show-progress 1> /dev/null 2> /dev/null
+
+if [ $? != 0 ] ; then
+   echo "? --no-show-progress test of cut_unit_test failed" >> $LOG_FILE
+fi
+
+valgrind -v --leak-check=full ./cut_unit_test --silent 1> /dev/null 2> /dev/null
+
+if [ $? != 0 ] ; then
+   echo "? valgrind test of cut_unit_test failed" >> $LOG_FILE
+fi
+
+cat $LOG_FILE
+
+rm -f $LOG_FILE
+
+#*****************************************************************************
+# test (cut++/tests)
+#-----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=sh
+#----------------------------------------------------------------------------

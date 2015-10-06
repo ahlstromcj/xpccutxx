@@ -1,0 +1,249 @@
+#*****************************************************************************
+# .gitignore
+#-----------------------------------------------------------------------------
+##
+# \file        .gitignore
+# \library     xpccut
+# \author      Chris Ahlstrom
+# \date        2012-03-06
+# \update      2015-10-05
+# \version     $Revision$
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#     Based on the .gitignore samples from the files at
+#     https://github.com/github/gitignore
+#
+#     Also see the file contrib/gitignores.txt for more.
+#
+# leaner by using global ignore-files for system (i.e. not project-related)
+# stuff, such as vim backup files:
+#
+#   http://augustl.com/blog/2009/global_gitignores/
+#
+# To set up a global ignore-file, do this in your $HOME:
+#
+#    git config --global core.excludesfile ~/.gitignore
+#
+# \note
+# 		This file is meant to be used as the user's $HOME/.gitignore.
+# 		Additional specific ignores are present in the XPC project's hidden
+# 		.gitignore file.
+#
+#-----------------------------------------------------------------------------
+
+# Compiled Object and Executable files
+
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+
+*.so
+
+# Compiled Static libraries
+
+*.lai
+*.la
+*.a
+
+# Compressed files (git has its own compression)
+
+*.7z
+*.bz2
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# http://www.gnu.org/software/automake
+
+Makefile.in
+
+# http://www.gnu.org/software/autoconf
+
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+
+# Added by C. Ahlstrom, covering automake, valgrind, and personal extensions.
+
+# More automake 
+
+Makefile
+aux-files
+config
+.deps/
+.libs/
+i18n/
+stamp-h1
+
+# libtool/
+# cpp/
+
+# Valgrind
+
+core
+vgcore
+
+# Personal.  Don't forget to add your project executables to the list.
+
+dox-stamp
+*.t
+tmp/
+safety/
+save/
+
+# Personal debian-package stuff from debian/rules.
+
+build-stamp configure-stamp
+debian/*.log
+debian/files
+debian/libXPC-dev
+debian/libXPC1
+debian/tmp
+
+# Translations
+
+*.mo
+
+# gcc coverage (gcov) testing tool files
+
+*.gcno
+*.gcda
+*.gcov
+
+# Vim
+
+.*.sw[a-z]
+*.un~
+Session.vim
+
+# LaTex and Doxygen
+
+html/
+latex/
+
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.nav
+*.nlo
+*.out
+*.pdfsync
+*.ps
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.maf
+*.mtc
+*.mtc0
+
+# Ignore tags created by etags and ctags
+
+TAGS
+tags
+
+# Subversion
+
+.svn/
+
+# Linux
+
+.*
+!.gitignore
+*~
+
+# Visual Studio dross
+
+# User-specific files
+
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+
+[Dd]ebug/
+[Rr]elease/
+*.com
+*.class
+*.dll
+*.exe
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.vspscc
+.builds
+
+# Visual C++ cache files
+
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+
+# Visual Studio profiler
+*.psess
+*.vsp
+
+# Click-Once directory
+
+publish
+
+# Others
+
+[Bb]in
+[Oo]bj
+sql
+TestResults
+*.Cache
+ClientBin
+stylecop.*
+~$*
+*.dbmdl
+Generated_Code # added for RIA/Silverlight projects
+
+# Backup & report files from converting an old project file to a newer
+# Visual Studio version. Backup files are not needed, because we have git ;-)
+
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+
+# .gitignore
+#
+# vim: ts=3 sw=3 ft=automake

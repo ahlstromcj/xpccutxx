@@ -1,0 +1,76 @@
+xpc_suite/xpccut++/README
+Chris Ahlstrom
+2008-05-04 to 2015-10-05
+
+==============================
+3rd-PARTY LIBRARY INSTALLATION
+==============================
+
+This project implements its functions using the POSIX threads (pthreads)
+API.  Therefore, it requires the developer to install the pthreads-w32
+project.  The easiest way is to download and run this executable:
+
+   ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.exe
+
+(That is the latest version, dated 12/22/2006.)
+
+Run the executable and extract it to its final destination (extraction is
+installation for this product).  We extract it to C:\Program Files\pthreads.
+
+Create a system or user variable for this directory, tacking on a little
+more, so that the "include" and "libs" directories are next:
+
+   PTHREADS_W32 = C:\Program Files\pthreads\Pre-built.2
+
+The project files for Win32 then include these entries:
+
+   $(PTHREADS_W32)/include
+   $(PTHREADS_W32)/lib
+   pthreadVCE2.lib
+
+For use in Qt with the MingW support, "Program Files" causes issues with
+the g++ command line.  So replace "Program Files" with "Qt", and adjust
+PTHREADS_W32 to match.  Also add these items to your application's
+*.pro file:
+
+   INCLUDE:  "$(PTHREADS_W32)/include"
+   LIBS:     "$(PTHREADS)W32/lib/libpthreadGCE2.a"
+
+IMPORTANT:
+
+   After you have defined this environment variable, you should stop
+   all instances of Windows Explorer, Visual Studio, and the DOS console.
+   Otherwise, they and their child processes will not see the new
+   environment variable!
+
+   If you keep having problems building libxpc.lib, then make sure that
+   PTHREADS_W32 is properly defined, and reboot.
+
+Note that there is also a Win32 driver provided by pthreads-w32.  This
+driver provides pre-emptive APC by forcing threads into an alertable state
+when the APC is queued, thus allowing true async cancellation of threads
+(including blocked threads).  See that project's README file for more
+information.
+
+==============================
+libxpcw32 (TODO)
+==============================
+
+This version of the library is a small variation on the regular library, to
+use for testing.  All it does is substitute the true Windows implementation
+of the syncher utility, so that we can see how well we do compared to the
+pthreads-w32 library as far as handling critical sections goes.  NOT YET
+FINISHED.
+
+==============================
+Visual Studio Warnings
+==============================
+
+These are disabled due to problems in the VS 7.0 Windows header files:
+
+   C4127    Use of constant in while()
+   C4201    Nonstandard extension used: nameless struct/union
+
+# README (xpccut++/w32)
+#
+# vim: ts=3 sw=3

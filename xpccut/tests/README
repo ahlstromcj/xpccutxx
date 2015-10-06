@@ -1,0 +1,20 @@
+xpc_suite-1.1/xpccut/tests/README
+Chris Ahlstrom
+2008-03-02 to 2015-10-05
+
+This directory contains the C source-code files for the XPCCUT library test
+application, unit_test_test.
+
+The library source files are in the xpccut/src directory.
+
+The header files are in the xpccut/include/xpc directory.
+
+The "test_script" script is meant to call the unit-test application in a
+number of different ways to ensure good test coverage.  Be sure to generate
+the Doxygen documentation and read the pages on debugging (gdb, ddd),
+profiling (gprof) and test coverage (gcov).
+
+See the README files in all of the other XPCCUT project directories
+for more information.
+
+# vim: ts=3 sw=3 et ft=sh

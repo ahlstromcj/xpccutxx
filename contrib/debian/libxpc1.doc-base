@@ -1,0 +1,11 @@
+Document: xpc++
+Title: Debian libxpc ++Manual
+Author: Chris Ahlstrom <ahlstromcj@gmail.com>
+Abstract: This manual describes what libxpc ++is
+   and how it can be used, in Doxygenated HTML format.
+Section: unknown
+
+Format: HTML
+Index: /usr/share/doc/xpc++-1.1/html/index.html
+Files: /usr/share/doc/xpc++-1.1/html/*.html, /usr/share/doc/xpc++-1.1/html/*.png, /usr/share/doc/xpc++-1.1/html/*.gif, /usr/share/doc/xpc++-1.1/html/*.css
+

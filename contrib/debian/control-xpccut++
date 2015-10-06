@@ -1,0 +1,36 @@
+Source: xpccut++-1.1
+Section: libs
+Priority: extra
+Build-Depends: debhelper (>= 7), autotools-dev
+Maintainer: Chris Ahlstrom <ahlstromcj@gmail.com>
+Uploaders: Chris Ahlstrom <ahlstromcj@gmail.com>
+Standards-Version: 3.7.3
+Homepage: http://xpc-suite (TBD)
+
+Package: libxpccut++-dev
+Section: libdevel
+Architecture: any
+Depends: libxpccut++1 (= ${binary:Version}), libxpccut1
+Description: A portable unit-test library for C and C++ libraries.
+   The XPCCUT library is a cross-platform C/C++ unit-test library.
+   It is meant for producing unit-test applications that are easy to
+   write, easy to follow, and easy to debug.  This is the header-file
+   package for libxpccut.  The files are installed into
+   $prefix/include/xpccut-1.1/xpc.
+
+Package: libxpccut++1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A portable unit-test library for C and C++ libraries.
+   The XPCCUT library is a cross-platform C/C++ unit-test library.
+   It is meant for producing large unit-test applications that are easy to
+   write, easy to follow, and easy to debug.  It provides an options
+   structure that can parse a large number of command-line options.  It
+   provides a status structure that keeps track of failure and CPU times.
+   It provides a unit-test framework structure that is simple, but flexible.
+   Unit-test cases can be grouped, and individual test-cases can be isolated
+   for debugging.  It is straightforward to wrap it in a C++ framework.  (In
+   fact, one is written, to be released soon.)  It includes its own
+   unit-test application (500+ sub-tests) that also serves as an example of
+   usage.  It needs libpthread and libm, but these are normally present.

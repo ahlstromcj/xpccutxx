@@ -1,0 +1,19 @@
+#*****************************************************************************
+# xpc_suite/xpchello/w32/README -- Chris Ahlstrom 05/15/2008-05/15/2009
+#-----------------------------------------------------------------------------
+
+Windows:
+
+   Sorry, at this time, this project does not support Microsoft Windows.  I
+   don't have a lot of motivation to get gettext() working under Windows.
+   If you get it to work, please send me the files or changes you needed.
+
+   This project might build under Cygwin, but I'm not sure if all of the
+   components needed (e.g. graphviz and autopoint) are available with
+   Cygwin/X.  Again, I will be happy to receive any fixes.
+
+#*****************************************************************************
+# README (xpchello/w32)
+#-----------------------------------------------------------------------------
+# vim: ts=3 sw=3
+#-----------------------------------------------------------------------------

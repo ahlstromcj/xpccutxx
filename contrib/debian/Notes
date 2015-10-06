@@ -1,0 +1,39 @@
+
+Errors to figure out with both install packages:
+
+$ sudo dpkg -i libxpccut-dev_1.0.0_i386.deb
+
+   dpkg: dependency problems prevent configuration of libxpccut-dev:
+    libxpccut-dev depends on libxpccut1 (= 1.0.0); however:
+      Package libxpccut1 is not installed.
+
+$ sudo dpkg -i libxpccut1_1.0.0_i386.deb
+
+   dpkg: error processing libxpccut1_1.0.0_i386.deb (--install):
+       trying to overwrite `/usr/share/locale/es/LC_MESSAGES/xpccut.mo',
+       which is also in package libxpccut-dev
+
+So we remove this from libxpccut-dev.install:
+
+   usr/share/locale/es/LC_MESSAGES/*.mo
+   usr/lib/xpc-1.0/lib*.so*
+   usr/lib/xpc-1.0/lib*.a
+   usr/lib/xpc-1.0/lib*.la
+   usr/lib/pkgconfig/*.pc
+
+and this from libxpccut-dev.dirs:
+
+   usr/share/locale/es/LC_MESSAGES
+   usr/lib/xpc-1.0
+   
+Looking at the libgif4 and libgif-dev packages, here are the main
+differences:
+
+   o  /usr/lib in the dev version:
+
+      o  Contains the *.a and *.la files, and fake *.so files
+      o  Does not provide the *.so files that the non-dev version provides
+
+   o  dev version also has the /usr/include directory.
+
+   o The regular version also contains postinst and postrm scripts

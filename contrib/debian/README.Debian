@@ -1,0 +1,19 @@
+#******************************************************************************
+# xpc_suite/xpccut/debian/README.debian -- Chris Ahlstrom 05/12/2008-08/02/2009
+#------------------------------------------------------------------------------
+
+The XPCCUT library is a unit-test library for use in C programs.  It also
+serves as the basis for a complementary C++ wrapper library.
+
+This is our first try at making a Debian package.  We welcome any ideas or
+criticism you have to offer.
+
+The process we used to create the Debian packaging is documented in the
+Doxygen documentation.  See the top-level README for how to build this
+documentation.
+
+#*****************************************************************************
+# README.debian (xpccut/debian)
+#-----------------------------------------------------------------------------
+# vim: ts=3 sw=3
+#-----------------------------------------------------------------------------

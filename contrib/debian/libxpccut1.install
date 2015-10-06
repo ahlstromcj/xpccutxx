@@ -1,0 +1,4 @@
+usr/lib/xpc-1.1/lib*.so*
+usr/lib/xpc-1.1/lib*.a
+usr/lib/xpc-1.1/lib*.la
+usr/lib/pkgconfig/*.pc

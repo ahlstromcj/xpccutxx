@@ -1,0 +1,16 @@
+README for the "include" Directory
+Chris Ahlstrom
+2015-10-05 to 2015-1005
+
+Rather than having multiple copies of an xpc-config.h file, one per
+sub-project, it makes more sense to have just one copy.
+
+This 'include' directory is for Linux and Windows configuration files that
+specifies the headers, libraries, and features available to XPC modules and
+applications.
+
+The include files in this directory are ultimately installed into system
+areas where other projects (including other xpc projects) have access to
+them.
+
+# vim: ts=3 sw=3 et ft=sh

@@ -1,0 +1,29 @@
+#*****************************************************************************
+# LINGUAS (xpccut-1.1/po)
+#-----------------------------------------------------------------------------
+##
+# \file       	LINGUAS
+# \library    	xpccut
+# \author     	Chris Ahlstrom
+# \date       	2008-05-10
+# \update      2015-10-05
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$, but use this any way you like.
+#
+#     This file provides the list of languages for which to build language
+#     support.
+#
+#     Since we know a little Español, we include that language by default.
+#
+# \references
+# 		-	http://olympus.het.brown.edu/cgi-bin/info2www?(gettext)po/LINGUAS
+#
+#-----------------------------------------------------------------------------
+
+es
+
+#*****************************************************************************
+# LINGUAS
+#-----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=automake
+#-----------------------------------------------------------------------------

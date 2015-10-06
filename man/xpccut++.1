@@ -1,0 +1,127 @@
+.\"******************************************************************************
+.\" xpc_suite/xpccut++/man/xpccutpp.1
+.\"------------------------------------------------------------------------------
+.\"
+.\" \file       	xpccutpp.1
+.\" \library    	xpccut++
+.\" \author     	Chris Ahlstrom
+.\" \date       	05/31/2008-10/05/2015
+.\" \version    	$Revision$
+.\" \license    	$XPC_SUITE_GPL_LICENSE$
+.\"
+.\" Hey, EMACS: -*- nroff -*-
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.\"
+.\" Please adjust the following date whenever revising the manpage.
+.\"
+.\"------------------------------------------------------------------------------
+
+.TH XPCCUT++ 1.1.2 "October 5, 2015"
+
+.\"******************************************************************************
+.\" Some roff macros, for reference:
+.\"
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\"
+.\" for manpage-specific macros, see man(7)
+.\"
+.\"------------------------------------------------------------------------------
+
+.de BP
+.sp
+.ti \-.2i
+\(**
+..
+
+.SH NAME
+XPCCUT++ \(em\& xpccut++ -- A Cross-Platform C++ Unit Test Library
+
+.SH SYNOPSIS
+xpc::cut
+xpc::cut_options
+xpc::cut_status
+
+.SH DESCRIPTION
+
+This man page is not well-maintained and is incomplete.
+The Doxygen documentation in
+/usr/share/doc/xpccut-1.0/html/index.html
+or
+/usr/local/share/doc/xpccut-1.0/html/index.html
+is the authoritative source of XPCCUT information.
+
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invoke bold face and italics,
+.\" respectively.
+
+\fBxpccut++\fP is a library that provides a simple, flexible unit-test
+framework for C++ programs.  It wraps the C code unit-testing of the CUT
+library, and makes it even easier to use.
+
+The developer simply writes a number of unit-test functions with a
+consistent function signature, and then loads these functions.
+
+The unit-test framework then iterates through the unit-test functions,
+seeing which ones are to be executed, which ones are interactive tests,
+and then executing each one.
+
+The unit-test functions can be grouped, and a group of tests can be
+selected to run, from the command-line.
+
+Specific unit-test cases can be selected to run from the command line, for
+easy debugging of a test that is failing.
+
+Each function function can run a number of sub-tests as well.
+
+As the functions are executed, progress is displayed, sub-tests are counted,
+and other information is logged.  At the end of the test, a single pass/fail
+result is returned.
+
+Options are provided for silent output, bypassing of tests that require user
+interaction (or simulation of user responses), and much more.
+
+This unit-test library also comes with a complete unit-test application that
+tests the unit-test library, and serves to show many techniques that can be
+used for testing.
+
+This library is also the basis for an upcoming C++ unit-test library, so
+that programs in both C and C++ can be tested in a uniform manner.
+
+.SH OPTIONS
+.I xpccut++
+options are discussed thoroughly in the Doxygen documentation.
+The unit-test application can be run with the --help option to see them all.
+
+.TP
+.B \-h --help
+Print an informative help message describing the options and then exit.
+
+.TP
+.B \-v --version
+Print the version number of
+.I unit_test_test
+on the standard error output and then exit.
+
+.SH "BUGS"
+There are bugs, of course.  But so far our unit-testing has found them all.
+
+.SH "AUTHORS"
+.I xpccut
+was written by Chris Ahlstrom.
+This man page was written by Chris Ahlstrom.
+
+.\"******************************************************************************
+.\" xpc_suite/xpccut++/man/xpccut++.1
+.\"------------------------------------------------------------------------------
+.\" vim: ts=3 sw=3 ft=nroff
+.\"------------------------------------------------------------------------------

@@ -1,0 +1,501 @@
+#!/bin/bash
+#
+#******************************************************************************
+# xpc-bootstrap-po (XPCCUT)
+#------------------------------------------------------------------------------
+##
+# \file       	xpc-bootstrap-po
+# \library    	xpccut
+# \author     	Chris Ahlstrom
+# \date       	2011-12-31
+# \update     	2015-10-06
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#     The above is modified by the following to remove even the mild GPL
+#     restrictions: Use this script in any manner whatsoever.  You don't even
+#     need to give me any credit.  However, keep in mind the value of the GPL
+#     in keeping software and its descendant modifications available to the
+#     community for all time.
+#
+#------------------------------------------------------------------------------
+
+#******************************************************************************
+# Provide a sane environment, just in case it is needed.
+#------------------------------------------------------------------------------
+
+LANG=C
+export LANG
+CYGWIN=binmode
+export CYGWIN
+
+#******************************************************************************
+#  Set up for local versus system usage of bootstrapping
+#------------------------------------------------------------------------------
+
+INSTALL_PREFIX="/usr/local"
+HELP_DIR="./scripts"
+SCRIPTS_DIR="./scripts"
+
+if [ "$0" != "./scripts/xpc-bootstrap-po" ] ; then
+   echo "'$0' not in force, running installed version of xpc-bootstrap-po..."
+   INSTALL_PREFIX="${0%/bin/xpc-bootstrap-po}"
+   HELP_DIR="$INSTALL_PREFIX/share/doc/xpc-$XPC_LIBRARY_API_VERSION"
+   SCRIPTS_DIR="$INSTALL_PREFIX/bin"
+fi
+
+source $SCRIPTS_DIR/xpc_boot_functions
+
+if [ $? != 0 ] ; then
+   echo "'source $SCRIPTS_DIR/xpc_boot_functions' failed.  Must abort."
+   exit 255
+fi
+
+#******************************************************************************
+# Option flags.
+#------------------------------------------------------------------------------
+
+DOINTLCLEAN="no"
+DOINTLBOOT="no"
+DOINTLPROCESS="no"
+DOINTLFULL="no"
+DOANYWORK="no"
+
+#******************************************************************************
+# gettextize (now known as 'autopoint'):
+#------------------------------------------------------------------------------
+#
+#     This call prepares the project for the usage of gettext features.
+#     It is not completely used in the XPC project (at this time), but is
+#     supported.
+#
+#     Also note that autopoint might require CVS to be installed, at least
+#     on Debian.
+#
+#     Also needs automake-1.8 or above to guarantee some new macros.
+#
+#------------------------------------------------------------------------------
+
+AUTOPOINT=autopoint
+
+#******************************************************************************
+# Internationalization (po/gettext) help.
+#------------------------------------------------------------------------------
+
+if [ "$1" == "--help" ] ; then
+
+   echo "XPCCUT Library Suite po/i18n bootstrap $XPC_LIBRARY_VERSION $XPC_BOOT_EDIT_DATE"
+   cat $HELP_DIR/bootstrap-po.help
+   exit 1
+
+fi
+
+if [ $# -ge 1 ] ; then
+
+   while [ "$1" != "" ] ; do
+
+      echo "   Processing command-line option $1"
+      case "$1" in
+
+         --intl-boot | --boot)
+
+            DOINTLBOOT="yes"
+            DOANYWORK="yes"
+            ;;
+
+         --intl-clean | --clean)
+
+            DOINTLCLEAN="yes"
+            ;;
+
+         --intl-process | --process)
+
+            DOINTLPROCESS="yes"
+            DOANYWORK="yes"
+            ;;
+
+         --intl-full)
+
+            DOINTLBOOT="yes"
+            DOINTLFULL="yes"
+            DOINTLPROCESS="yes"
+            DOANYWORK="yes"
+            ;;
+
+         --clean)
+            ;;
+
+         --log)
+            shift
+            ;;
+
+         *)
+            echo "? Unsupported xpc-bootstrap-po option; use the --help option" ;
+            exit $EXIT_ERROR_NO_SUCH_OPTION
+            ;;
+      esac
+
+      shift
+
+   done
+
+fi
+
+#******************************************************************************
+# clean_intlfiles()
+#------------------------------------------------------------------------------
+#
+#     Deletes files created by the "xpc-bootstrap-po" or
+#     "xpc-bootstrap-po --intl-boot" command.
+#
+# \param
+#
+#     $1    Do a "super" cleanup if set to "yes".
+#
+# \return
+#
+#     Files are deleted.  This function does not return any error status.
+#
+#------------------------------------------------------------------------------
+
+function clean_intlfiles()
+{
+   if [ "$1" == "yes" ] ; then
+
+      echo "   Warning: Cleaning out user-edited files in po directory"
+      mv po/*.po po/backup
+      mv po/*.pot po/backup
+      mv po/LINGUAS po/backup
+      mv po/Makevars po/backup
+      mv po/ChangeLog po/backup
+      rm -f po/Makefile.in.in
+      rm -f po/Makevars
+      rm -f po/LINGUAS*
+      rm -f po/POTFILES.in
+      rm -f po/*.pot
+      rm -f po/*.po
+      rm -f po/*.mo
+      rm -f po/*.gmo
+      rm -f po/stamp-po
+
+   fi
+
+   # Remove all files generated by gettextize/autopoint (DOINTLBOOT) that
+   # aren't taken care of by 'bootstrap --clean'.
+
+#  rm -f ABOUT-NLS
+   rm -f po/Makevars.template
+   rm -f po/Rules-quot
+   rm -f po/boldquot.sed
+   rm -f po/en@boldquot.header
+   rm -f po/en@quot.header
+   rm -f po/insert-header.sin
+   rm -f po/quot.sed
+   rm -f po/remove-potcdate.sin
+   rm -f po/remove-potcdate.sed
+   rm -f po/ChangeLog
+   rm -f m4/gettext.m4
+   rm -f m4/iconv.m4
+   rm -f m4/lib-ld.m4
+   rm -f m4/lib-link.m4
+   rm -f m4/lib-prefix.m4
+   rm -f m4/nls.m4
+   rm -f m4/po.m4
+   rm -f m4/progtest.m4
+   rm -f m4/ChangeLog
+
+# We don't understand why we're doing these apparently bogus copies!
+# Let's use "fresh" originals to overwrite the modified versions of these
+# files.
+
+### cp Makefile.am.fresh Makefile.am
+### cp configure.ac.fresh configure.ac
+
+   rm -f Makefile.am~ configure.ac~
+   rm -f config.guess config.sub
+
+   # Remove the po files generated by ./configure
+
+   rm -f po/Makefile
+   rm -f po/Makefile.in
+   rm -f po/POTFILES
+
+   # Remove files that 'make clean' seems to miss
+
+   rm -f po/Makefile.in.in~
+   rm -f po/*~
+
+   # Remove even files the might have been created/edited by the user.
+   # Some potentially user-edited files are copied to backup.
+}
+
+#******************************************************************************
+# build_POTFILES()
+#------------------------------------------------------------------------------
+#
+#     Builds a ready-to-tweak list of translatable files using some
+#     xpchello template files.
+#
+#     This function assumes gettextize/autopoint has already been run, and
+#     that we don't care about the empty po/POTFILES.in file it creates.  It
+#     also assumes that it is run from the project's root directory.
+#
+# \references
+#     -  http://olympus.het.brown.edu/cgi-bin/info2www?(gettext)po/POTFILES.in
+#
+#------------------------------------------------------------------------------
+
+function build_POTFILES()
+{
+   echo "Building './po/POTFILES.in' ..."
+   cp ./contrib/po/top-POTFILES.in ./po/POTFILES.in
+
+   find ./xpccut/src/ -name "*.c" >> ./po/POTFILES.in
+   find ./xpccut/tests/ -name "*.c" >> ./po/POTFILES.in
+   find ./xpchello/src/ -name "*.c" >> ./po/POTFILES.in
+   find ./xpchello/tests/ -name "*.c" >> ./po/POTFILES.in
+   find ./xpc/src/ -name "*.c" >> ./po/POTFILES.in
+   find ./xpc/tests/ -name "*.c" >> ./po/POTFILES.in
+   find ./xpccut++/src/ -name "*.cpp" >> ./po/POTFILES.in
+   find ./xpccut++/tests/ -name "*.cpp" >> ./po/POTFILES.in
+   find ./xpc++/src/ -name "*.cpp" >> ./po/POTFILES.in
+   find ./xpc++/tests/ -name "*.cpp" >> ./po/POTFILES.in
+
+   cat ./contrib/po/bottom-POTFILES.in >> ./po/POTFILES.in
+}
+
+#******************************************************************************
+# Implement the clean option.
+#------------------------------------------------------------------------------
+#
+#     This goes well beyond "make clean" and "make distclean".  It cleans
+#     out /everything/ that gets created by bootstrapping and building the
+#     library and test application.
+#
+#------------------------------------------------------------------------------
+
+if [ $DOINTLCLEAN == "yes" ] ; then
+
+# Derived files and other junk
+
+   find . -name ABOUT-NLS -exec rm -f '{}' \;
+   clean_intlfiles $DOINTLCLEAN
+   echo "   Most files in po removed!  Hope you meant to do that!"
+
+fi
+
+if [ $DOINTLBOOT == "yes" ] ; then
+
+   #************************************************************************
+   # Implement the boot option.
+   #------------------------------------------------------------------------
+   #
+   # Run gettextize/autopoint and provide provisional versions of the
+   # editing recommended at this reference:
+   #
+   # http://olympus.het.brown.edu/cgi-bin/info2www?(gettext)Adjusting+Files
+   #
+   # It will ask a question that you have to answer.  We provide the
+   # (premature) beep.
+   #
+   # Get fresh copies of the configure.ac and Makefile.am files.
+   # The gettextize process always adds a little junk to them, and if
+   # done twice, configuration will fail.  So, these two files have to
+   # be backed up by the user when the user edits them, using the command
+   # './bootstrap --backup'.
+   #
+   #------------------------------------------------------------------------
+
+   echo "Restoring top-level configure.ac and Makefile.am from contrib/po."
+   cp ./contrib/po/Makefile.am.fresh ./Makefile.am
+   cp ./contrib/po/configure.ac.fresh ./configure.ac
+
+   $AUTOPOINT --force
+
+   if [ $? == 0 ] ; then
+
+      build_POTFILES
+      pushd ./po
+
+# The --no-translator option makes msginit skip prompting for your email
+# address.
+
+      msginit --no-translator --input=../contrib/po/xpc.pot --output-file=es.po
+      popd
+
+   else
+
+      cat << E_O_F
+
+         The gettextize/autopoint command failed at this point!  Make sure
+         that GNU gettext and autopoint are installed.  This project also
+         requires cvs and pkg-config to be installed.
+
+         If gettext/autopoint and its dependencies are already installed,
+         you probably want to start from scratch, by first issuing a
+         './bootstrap --super-clean' command.  Run the command './bootstrap
+         --help' for more information.
+
+E_O_F
+         exit $EXIT_ERROR_GETTEXT
+
+   fi
+
+   if [ -f ./contrib/po/Makevars ] ; then
+
+      cp ./contrib/po/Makevars ./po
+      cp ./contrib/po/LINGUAS ./po
+
+   fi
+
+   #*********************************************************************
+   # According to the following reference, these files are not necessary
+   # unless the intl/ sub-directory is included.  But what the hey.
+   #
+   # http://olympus.het.brown.edu/cgi-bin/info2www?(gettext)config.guess
+   #---------------------------------------------------------------------
+
+   if [ -f ./contrib/po/config.guess ] ; then
+
+      echo "Not supporting intl/, so we won't copy config.guess and config.sub"
+
+#     cp ./contrib/po/config.guess .
+#     cp ./contrib/po/config.sub   .
+
+   else
+
+# This code appears to be problematic as well (2012-03-14).  It parses the
+# URL as http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config.guess
+# and yields ERROR 404: Not Found.
+
+      GNUSITE=http://savannah.gnu.org/cgi-bin/viewcvs/*checkout*/config
+      echo "Obtaining config.guess and config.sub from the web ..."
+      pushd .
+      wget $GNUSITE/config/config.guess
+      popd
+
+      if [ $? != 0 ] ; then
+
+         echo "? Operation failed.  Make sure wget is installed."
+         exit $EXIT_ERROR_WGET
+
+      fi
+
+      pushd .
+      wget $GNUSITE/config/config.sub
+      popd
+
+   fi
+
+   #*********************************************************************
+   # According to the following reference, this file is needed.
+   #
+   # http://olympus.het.brown.edu/cgi-bin/info2www?(gettext)mkinstalldirs
+   #---------------------------------------------------------------------
+#
+#  if [ -d ./aux-files ] ; then
+#
+#     echo "Installing the latest automake mkinstalldirs into aux-files..."
+#     cp ./contrib/bin/mkinstalldirs-1.10 ./aux-files/mkinstalldirs
+#
+#  else
+#
+#     echo
+#     echo "No aux-files directory was created.  You will have to copy"
+#     echo "mkinstalldirs (from /usr/share/automake-1.10 or the latest"
+#     echo "version to aux-files yourself."
+#
+#  fi
+
+   # Make sure the po and pot files are available, even if not configuring.
+
+   echo
+   echo "Copying a pre-edited es.po (bad Spanish translation) files to po in"
+   echo "order to satisfy the po make process."
+   if [ -f ./contrib/po/es-orig.po ] ; then
+
+      cp ./contrib/po/es-orig.po ./po/es.po
+
+   else
+
+#     We already did something like this above!!!!
+#
+#     echo
+#     echo "Oops! There is no es-orig.po file.  We will fake it for now to create"
+#     echo "an empty es.po file."
+
+#     cp ./contrib/po/xpchello.pot ./po
+      pushd ./po
+#     msginit -i xpchello.pot -l es
+      popd
+
+   fi
+
+   echo "Now run configure or build to (among other things) generate the"
+   echo "po/Makefile script."
+
+fi
+
+if [ $DOINTLFULL == "yes" ] ; then
+
+   mkdir -p ./i18n
+   pushd ./i18n
+   ../configure
+   pushd ./po
+   make
+   popd
+   popd
+
+   echo "You will find the new es.po file generated in the root po directory."
+   echo "You can add translations to that file."
+
+elif [ $DOINTLPROCESS == "yes" ] ; then
+
+   pushd ./po
+
+   if [ -f en.po ] ; then
+
+      echo "go"
+
+   else
+
+      make
+
+      echo "You will find the new es.po file generated in the root po directory."
+      echo "You can add translations to that file."
+
+   fi
+
+   popd
+
+fi
+
+if [ $DOINTLBOOT == "no" ] ; then
+
+   if [ $DOINTLCLEAN == "no" ] ; then
+
+      if [ -f ./po/es.po ] ; then
+
+         echo "po/es.po found"
+
+      else
+
+         cat << E_O_F
+
+The XPCCUT suite has not yet had internationalization set up.
+This is either your first time running the bootstrap script, or you
+previously ran it with the scary --intl-clean option.  This project needs
+to be set up from scratch using the --intl-boot option.  Run the --help
+option for more information.
+
+E_O_F
+
+      fi
+   fi
+fi
+
+#******************************************************************************
+# xpc-bootstrap-po (XPCCUT)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

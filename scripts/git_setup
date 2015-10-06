@@ -1,0 +1,172 @@
+#!/bin/bash
+#
+#******************************************************************************
+# git_setup (XPCCUT)
+#------------------------------------------------------------------------------
+##
+# \file       	git_setup
+# \library    	XPCCUT
+# \author     	Chris Ahlstrom
+# \date       	2012-03-04
+# \update     	2015-10-05
+# \version    	$Revision$
+# \license    	$XPCCUT_SUITE_GPL_LICENSE$
+#
+#     The above is modified by the following to remove even the mild GPL
+#     restrictions: Use this script in any manner whatsoever.  You don't even
+#     need to give me any credit.  However, keep in mind the value of the GPL
+#     in keeping software and its descendant modifications available to the
+#     community for all time.
+#
+#------------------------------------------------------------------------------
+
+source scripts/xpc_boot_functions
+
+if [ $? != 0 ] ; then
+   echo "'source scripts/boot_functions' failed.  Must abort."
+   exit 255
+fi
+
+USERNAME="Chris Ahlstrom"
+USEREMAIL="ahlstromcj@gmail.com"
+USEREDITOR="vim"
+USERDIFF="gvimdiff"
+
+DOCONFIG="no"
+DOPROJECT="no"
+DOINIT="no"
+DOCLONE="no"
+DOCLEAN="no"
+
+#******************************************************************************
+# Help
+#------------------------------------------------------------------------------
+
+if [ "$1" == "--help" ] ; then
+
+   cat << E_O_F
+
+XPCCUT Libraries git_setup $XPCCUT_LIBRARY_VERSION " " $XPCCUT_SCRIPT_EDIT_DATE
+
+Usage: $0 [options]
+
+   This script helps you set-up git.  It provides a good example of stuff
+   you need to do to set up git for yourself and for a project.
+
+ --init              Run "git init" on the XPCCUT project.  You must be in the
+                     root (xpc-suite-x.y) directory.  This also adds the
+                     whole project to git's staging area, and commits it.
+                     As an alternative, you can try the --clone option.
+ --clone             Retrieve the XPCCUT project from git online.  At present,
+                     this option is not implemented.
+ --config name       Configure git to your preferences.  All four arguments
+    email editor     are required.  Example:
+    difftool            ./git_setup --config "Hy Lo" hl@f.org vim vimdiff
+ --defconfig         Same as --config, but using the pre-defined arguments
+                     set at the top of this script.  Feel free to change
+                     them to your preferences.
+ --clean             This merely discards certain changes in files by
+                     doing a series of 'git checkout' commands.
+
+The main use case for us is "./git_setup --init --defconfig", after editing
+this script's "USERXXXX" variables.  Recommend you read this script and
+understand the commands that are done.
+
+E_O_F
+
+   exit 1
+fi
+
+if [ $# -ge 1 ] ; then
+
+   while [ "$1" != "" ] ; do
+
+      echo "   Processing command-line option $1"
+      case "$1" in
+
+         --init)
+            DOINIT="yes"
+            ;;
+
+         --clone)
+            DOCLONE="yes"
+            ;;
+
+         --clean)
+            DOCLEAN="yes"
+            ;;
+
+         --defconfig)
+            DOCONFIG="yes"
+            ;;
+
+         --config)
+            DOCONFIG="yes"
+            shift
+            USERNAME="$1"
+            shift
+            USEREMAIL="$1"
+            shift
+            USEREDITOR="$1"
+            shift
+            USERDIFF="$1"
+            ;;
+
+         *)
+            echo "? Unsupported XPCCUT git_setup option; --help for more information" ;
+            exit 1
+            ;;
+
+      esac
+      shift
+   done
+fi
+
+if [ $DOCONFIG == "yes" ] ; then
+
+   git config --global user.name "$USERNAME"
+   git config --global user.email "$USEREMAIL"
+   git config --global core.editor "$USEREDITOR"
+   git config --global merge.tool "$USERDIFF"
+   echo "User options written to your ~/.gitconfig file."
+
+fi
+
+if [ $DOPROJECT == "yes" ] ; then
+
+   cp scripts/dot-gitignore .gitignore
+   echo "Stock C/C++ ignores copied to XPCCUT's .gitignore file."
+
+fi
+
+if [ $DOINIT == "yes" ] ; then
+
+   echo "Initializing this project directory and committing it to git..."
+   git init && git add . && git commit -m "Initial XPCCUT suite project revision."
+   echo "Done.  Check output for errors."
+
+fi
+
+if [ $DOCLONE == "yes" ] ; then
+
+# git clone git://github.com/schacon/xpc-suite.git
+
+   echo "? Git clone is not yet supported. No remote repository."
+   exit 1; 
+
+fi
+
+if [ $DOCLEAN == "yes" ] ; then
+
+   git checkout m4/libtool.m4
+   git checkout m4/ltoptions.m4
+   git checkout m4/ltversion.m4
+   git checkout m4/lt~obsolete.m4
+
+fi
+
+#******************************************************************************
+# git_setup (XPCCUT)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

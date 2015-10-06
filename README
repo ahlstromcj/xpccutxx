@@ -1,0 +1,20 @@
+README for XPCCUT++ 1.1.2 (current branch = "master")
+Chris Ahlstrom
+2015-10-05 to 2015-10-06
+
+This file is the "README" for the XPCCUT++ (xpccut++) projects.  They
+are:
+
+   -  xpccut.  A simple unit-test, timing-test, and regression-test framework
+      for C.  It tests itself.
+   -  xpccut++.  A C++ wrapper for xpccut to make it even easier to use.
+
+The main feature of these frameworks is that they are extremely flexible, use
+functions instead of macros, and make it easy to determine where a test is
+failing.
+
+See the INSTALL file for installation (currently oriented towards developers)
+and the generated PDF document for a rough outline of how to use these test
+frameworks.
+
+# vim: ts=3 sw=3 et ft=sh

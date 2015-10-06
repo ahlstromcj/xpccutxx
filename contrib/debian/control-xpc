@@ -1,0 +1,37 @@
+Source: xpc-1.1
+Version: 1.1.0-0
+Section: libs
+Priority: extra
+Build-Depends: debhelper (>= 7), autotools-dev
+Maintainer: Chris Ahlstrom <ahlstromcj@gmail.com>
+Uploaders: Chris Ahlstrom <ahlstromcj@gmail.com>
+Installed-Size: 999
+Standards-Version: 3.7.3
+Homepage: http://xpc-suite.sourceforge.net
+
+Package: libxpc-dev
+Section: libdevel
+Architecture: any
+Depends: libxpc1 (= ${binary:Version})
+Description: A portable utility library for C libraries.
+ The XPC library is a cross-platform C library.  It is meant for producing
+ applications that are easier to write, easier to follow, and easier to
+ debug.  This is the header-file package for libxpc.  The files are
+ installed into $prefix/include/xpc-1.1/xpc.
+ .
+ This package contains the development files.
+
+Package: libxpc1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A portable utility library for C libraries.
+ The XPC library is a cross-platform C library.
+ It is meant for producing large unit-test applications that are easy to
+ write, easy to follow, and easy to debug.  It provides an options
+ structure that can parse a large number of command-line options.  It
+ provides a status structure that keeps track of failure and CPU times.
+ It provides a unit-test framework structure that is simple, but flexible.
+ Unit-test cases can be grouped, and individual test-cases can be isolated
+ for debugging.  It includes its own unit-test applications.  It needs
+ libpthread and libm, but assumes these are present.

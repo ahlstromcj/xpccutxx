@@ -1,0 +1,45 @@
+Usage: ./xpc-bootstrap-po [options]                          (1.1-2015-10-05)
+
+This script checks to see if internationalization has been set up.  With
+additional options, it can help manage the task of internationalization.
+Setting up internationalization must be done manually.
+
+The first thing to do (and it is an ongoing job) is to mark the translatable
+strings in your C/C++ source with the _() macro.
+
+The next task is to run gettextize.  Since there is a lot to set up, it is
+easier to run './xpc-bootstrap-po --intl-boot'.  This action runs gettextize
+(the gettext package must be installed), then populates the po directory
+with files from the contrib directory.  See gettexttize(1) or our the XPC
+Doxygen documentation for more information and URLs.
+
+There are a couple of options related to internationalization and the
+translation files that can be created.
+
+ --intl-boot         Run gettextize.  Only do once, or after an --intl-clean.
+ --boot              Same as --intl-boot.
+ --intl-clean        In addition to what 'bootstrap --clean' does, also
+                     remove any altered translation files.
+ --clean             Same as --intl-clean.
+ --intl-process      Process the translations.  See below for the whole
+                     sequence you must follow.
+ --process           Same as --intl-process.
+ --intl-full         Perform the full sequence summarized below.
+ --help              Show this help text.
+
+The XPC Hello project (xpchello) serves as a tutorial on
+internationalization and linking to installed XPC libraries.
+
+Note that this project is not fully supported under Microsoft Windows
+(though it should work under Cygwin).  The code should build and run, but
+you are on your own for the gettext support.  If you get it to work, send us
+the solution (heh) and we will incorporate it into the next release.
+
+Internationalization life-cycle using the scripts:
+
+   0. Mark all 'C' and 'C++' source-files with the '_()' macro.
+   1. Run './bootstrap'.  This runs sets up the 'configure' script.
+   2. Run './xpc-bootstrap-po --intl-boot'.  This runs 'gettextize', adds
+      source-code files to the POTFILES list, and runs 'msginit'.
+   3. Run './configure'; this creates, among other things, the po/Makefile.
+   3. Run './xpc-bootstrap-po --intl-process'.

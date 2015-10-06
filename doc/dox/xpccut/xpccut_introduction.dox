@@ -1,0 +1,183 @@
+/**
+ * \file       xpccut_introduction.dox
+ *
+ *    This file describes the <b>XPC CUT</b> unit-test library written in
+ *    <b>C</b>.
+ *
+ * \library    xpccut
+ * \page       xpccut_introduction_page XPC C Unit Test Library
+ * \author     Chris Ahlstrom <ahlstromcj@gmail.com>
+ * \version    1.1
+ * \date       2008-03-23
+ * \update     2015-10-05
+ * \license    $XPC_SUITE_GPL_LICENSE$ (see \ref xpc_suite_license_subproject)
+ *
+ *    Although this documentation could be part of a more comprehensive
+ *    documentation package covering many libraries and applications, we
+ *    include a \introduction directive anyway.  If it causes problems as part
+ *    of XPC suite of projects, substitute the following Doxygen directive:
+ *
+ *       \page   xpccut_roadmap XPC C Unit Test Library
+ *
+ *//**
+
+Note that you can build the detailed-design documentation by running
+<i>doxygen</i> against the <tt>doxygen.cfg</tt> in directory
+<tt>xpccut-1.0/doc/dox</tt>.
+
+\section xpccut_introduction Introduction to the C Unit-Test Library
+
+   The <b>XPCCUT</b> library is a <i>cross-programming C unit test</i> library
+   that provides a flexible and easy-to-use unit-test framework.
+
+   We don't pretend this library does everything needed for good
+   unit-testing.  Here's what it does:
+
+      -  Provides flexible support for unit-test options including:
+         -  Test descriptions.
+         -  Quiet running (little or no output) or verbose operation.
+         -  Timing the tests.
+         -  Running portions of the test in an interactive manner.
+         -  Returning a single pass/fail value ("0" means "passed", "1"
+            means "failed").
+      -  Provides for some organization of the unit-tests:
+         -  By group (e.g. all tests for a given class).
+         -  By case (e.g. a single member function of a class).
+         -  By sub-test (e.g. an important corner case for a function).
+         This selectability makes it easy to focus on problematic cases
+         during debugging.
+      -  Allows for easy discovery of the exact failed test or
+         sub-test.
+      -  Provides support for semi-automated regression testing.
+      -  Generates a clean-looking and concise test report.
+
+   Here's what it <i> doesn't </i> do:
+
+      -  Provide a way to generate a unit-test framework.
+      -  Provide links to requirements for a project.
+      -  Provide for complete automated unit-test coverage.  (However,
+         instructons for coverage-testing are provided in this documentation).
+      -  Provide for easy profiling.  (However, instructons for
+         profiling are provided in this documentation).
+
+   Information about the options supported can be found in the documentation
+   for the <tt>unit_test_options.c</tt> module.
+
+\section xpccut_additional Additional Features
+
+The <b>XPCCUT</b> library also has support, some of it merely rudimentary,
+for the follwoing features.
+
+   -  Internationalization via the GNU gettext facility.
+   -  Additional <tt>configure</tt> options for debugging, enabling certain
+      pointer checks, test-coverage, profiling, and stack-checking.
+
+\section xpccut_dependencies Dependencies
+
+The <b>XPCCUT</b> project has dependencies at two levels:  user and developer.
+The user will normally use a tar file with a <tt>configure</tt> script in
+it, while the developer will use the <tt>bootstrap</tt> script to construct
+the former script.  Hence, the developer must install more dependencies.
+
+\section xpccut_dependencies_user User Dependencies
+
+   -  <i>GNU C/C++ compilers</i>.
+   -  <i>doxygen</i>.  Necessary for building the HTML documentation.
+   -  <i>graphviz</i>.  Necessary for building the diagrams that are
+      included in the HTML documentation.
+   -  <i>pkg-config</i>.
+
+\section xpccut_dependencies_developer Developer Dependencies
+
+   -  <i>autoconf</i>.
+   -  <i>autoconf-archive</i>.
+   -  <i>automake</i>.
+   -  <i>libtool</i>.
+   -  <i>texlive</i>.
+
+\section xpccut_making_pdf Generating the PDF Document
+
+Given that you are reading this documentation in a browser, most likely,
+you have already made the documentation via these steps:
+
+\verbatim
+   $ cd xpccut-1.0/doc/dox
+   $ make
+   $ cd html
+   $ $BROWSER index.html
+\endverbatim
+
+Therefore, creating a PDF version of this documentation in a single, large
+document is a trivial additional step.
+
+\verbatim
+   $ cd xpccut-1.0/doc/dox
+   $ cd latex
+   $ make pdf
+   $ mv refman.pdf XPCCUT-1.0-Reference_Manual.pdf
+   $ cp XPCCUT-1.0-Reference_Manual.pdf to_wherever_you_want
+\endverbatim
+
+The PDF document is about 360 pages, nicely laid out, with diagrams, a table
+of contents, an index, a navigable side-bar, and hyperlinks, all easily kept
+up to date as long as you modify your code-comments diligently with your
+favorite programmer's editor.
+
+Try doing that with a <b> WYSIWYG </b> word-processor like <i> Microsoft
+Word </i> or <i>OpenOffice Writer</i>!
+
+\section xpccut_library_usage Using the XPC CUT Library
+
+Since this library is supported by <i>automake</i>, complete instructions
+are provided in the <i>XPC Automake</i> document, in it's <i>Usage</i>
+subsection.  This document is part of the <b>XPC</b> suite, and is found in
+the <tt>xpc_suite</tt> directory, which is the parent directory of
+<tt>xpccut</tt>.
+
+Instructions for <i>Windows</i> builds are a bit more difficult, since
+there is no real convention for handling library project locations for
+either installation or header files.
+
+At some point, the reader may be able to find examples in the other XPC
+suite projects.  We'll note them here as we finish them.
+
+\section xpccut_references References
+
+\subsection xpccut_references_internal Internal References
+
+Also see the sidebar for access to references that may not be presented
+here (e.g. the source code).
+
+   -# \ref xpc_suite_license_subproject
+   -# \ref xpc_debugging
+   -# \ref xpc_coverage_profiling
+   -# \ref xpc_debian
+   -# \ref xpc_suite_license_application
+   -# \ref xpc_suite_license_library
+   -# \ref xpc_suite_license_documentation
+   -# \ref xpc_suite_license_affero
+
+\subsection xpccut_references_external External References
+
+There are a lot of other unit-test facilities out there.  Be sure to try as
+many as possible, to see which one hits the sweet spot for your projects.
+
+\subsubsection xpccut_references_external_test_frameworks Test Frameworks
+
+   -# http://en.wikipedia.org/wiki/List_of_unit_testing_frameworks
+   -# http://code.google.com/p/googletest/wiki/GoogleTestDevGuide
+
+\subsubsection xpccut_references_external_style Coding Style
+
+   -# http://code.google.com/p/google-styleguide/
+   -# http://www.gnu.org/prep/standards/standards.html
+   -# http://lxr.linux.no/linux/Documentation/CodingStyle
+   -# http://www.research.att.com/~bs/bs_faq2.html
+
+ */
+
+/*
+ * xpccut/doc/dox/xpccut_introduction.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

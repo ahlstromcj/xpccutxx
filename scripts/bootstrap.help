@@ -1,0 +1,42 @@
+Usage: ./bootstrap [options]                                 (1.1-2015-10-06)
+
+   XPCCUT provides C/C++ test libraries and test applications.  'bootstrap'
+   sets up GNU automake support for the project.  It can configure and
+   clean the projects.  The 'xpc-bootstrap-po' script sets up international
+   ization.  Run './scripts/xpc-bootstrap-po --help' for information.
+
+ --intl-boot, --po   After bootstrap, call './scripts/xpc-bootstrap-po --boot'
+                     to recreate the internationalization files. Do this the
+                     first time you work with XPC. This is the default.
+ --no-intl-boot,     Turns off creation of the internationalization files.
+ --no-po
+ --configure         After bootstrapping, run the 'configure' script for an
+                     in-source build; to do an out-of-source configuration,
+                     change to the desired directory and run '../configure'.
+                     Alternately, use the 'build' script after bootstrapping.
+ --reconstruct       After bootstrap, do --intl-boot, then --configure a
+                     standard in-source build. Used for basic build testing.
+ --debug, -ed,       Does --configure with the --enable-debug flag.  Note that
+  --enable-debug     creation of shared libraries is disabled for debugging.
+                     'bootstrap' lacks --enable-coverage and --enable-profile.
+ --clean             Delete all derived and junk files from the project.
+                     Does not imply --deb-clean or --super-clean.
+ --super-clean       Also clean out the po directory, which backs up the *.po
+                     files in that directory. Be careful!
+ --deb-clean         Remove only files created by the debian/rules scripting.
+ --log file          Write the main commands to the given file.  This
+                     is a good check of the progress of the bootstrap script.
+ --backup            Copy the configure.ac and Makefile.am to a safe place.
+                     Recommended whenever you update them.
+ --boot-install      Install the bootstrap scripts.  Needs root access.  The
+                     default is '/usr/local'.  Use --prefix to change that.
+                     Installation is required to build other XPC projects.
+ --boot-uninstall    Uninstall the scripts.  You must have root access.
+ --prefix dest       Change the destination for installation.
+ --help              Show this help text.
+
+   After 'bootstrap', run 'configure' to set up a normal release build.  A
+   short-cut bootstrap option is --enable-debug, which adds --disable-shared and
+   --configure. After 'bootstrap', you can alternatively run the 'build' script.
+   ('./build --help' for more information.) Try './scripts/build --test', which
+   builds and tests everything the make-files specify.

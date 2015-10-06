@@ -1,0 +1,100 @@
+#!/bin/bash
+#
+#******************************************************************************
+# boot_makegnus (XPCCUT)
+#------------------------------------------------------------------------------
+##
+# \file       	boot_makegnus
+# \library    	XPC
+# \author     	Chris Ahlstrom
+# \date       	2008-03-02
+# \update     	2015-10-05
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#------------------------------------------------------------------------------
+
+   #************************************************************************
+   # Create these files if they don't exist already.  If not supplied,
+   # the automake command fails.  Note the use of "here documents" (see "man
+   # bash").  Also, "automake --add-missing" will install some other files.
+   #------------------------------------------------------------------------
+
+   if [ ! -f ABOUT-NLS ] ; then
+
+      ex ABOUT-NLS << E_O_F
+i
+Exact content yet to be determined.
+This project does support internationalization.
+.
+w
+q
+E_O_F
+
+   fi
+
+   if [ ! -f AUTHORS ] ; then
+
+      ex AUTHORS << E_O_F
+i
+Current maintainer:
+   Chris Ahlstrom <ahlstromcj@gmail.com>
+
+Copyright holders:
+   Copyright (c) 2008-2015      Chris Ahlstrom <ahlstromcj@gmail.com>
+.
+w
+q
+E_O_F
+
+   fi
+
+   if [ ! -f ChangeLog ] ; then
+
+      ex ChangeLog <<E_O_F
+i
+2015-10-05 Chris Ahlstrom <ahlstromcj@gmail.com>
+
+   * This ChangeLog file is a rote file required by GNU automake.
+   * This file was created on 10/05/2015
+   * Please adhere to this notation if you update this file.
+   * See <http://www.gnu.org/prep/standards/html_node/Change-Logs.html>
+     for more information.
+.
+w
+q
+E_O_F
+
+   fi
+
+   if [ ! -f NEWS ] ; then
+
+      ex NEWS <<E_O_F
+i
+2008-03-02 Project refactored from unencumbered parts of the PSXC tutorial
+project.  The emphasis will be on heavy unit-testing.
+.
+w
+q
+E_O_F
+
+   fi
+
+   if [ ! -f README ] ; then
+
+   ex README << E_O_F
+i
+This project provides a library for some very basic, very helpful
+development functions, suitable for both C and C++ projects.
+.
+w
+q
+E_O_F
+
+   fi
+
+#******************************************************************************
+# boot_makegnus (XPCCUT)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

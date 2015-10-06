@@ -1,0 +1,400 @@
+#!/bin/bash
+#
+#******************************************************************************
+# build (XPC)
+#------------------------------------------------------------------------------
+##
+# \file       	build
+# \library    	xpccut
+# \author     	Chris Ahlstrom
+# \date       	2011-12-27
+# \update     	2015-10-05
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#     The above is modified by the following to remove even the mild GPL
+#     restrictions: Use this script in any manner whatsoever.  You don't even
+#     need to give me any credit.  However, keep in mind the value of the GPL
+#     in keeping software and its descendant modifications available to the
+#     community for all time.
+#
+#     Note that this script resides in the 'scripts' directory, but must be
+#     run from the XPCCUT root directory (e.g. 'xpccut++').  There is also an
+#     option to install this script system-wide.  See 'bootstrap --help' for
+#     information.
+#
+#------------------------------------------------------------------------------
+
+#******************************************************************************
+# Provide a sane environment, just in case it is needed.
+#------------------------------------------------------------------------------
+
+LANG=C
+export LANG
+CYGWIN=binmode
+export CYGWIN
+
+export XPC_SCRIPT_EDIT_DATE="2015-10-05"
+export XPC_LIBRARY_API_VERSION="1.1"
+export XPC_LIBRARY_VERSION="$XPC_LIBRARY_API_VERSION.0"
+
+#******************************************************************************
+#  Set up for local versus system usage of bootstrapping
+#------------------------------------------------------------------------------
+
+INSTALL_PREFIX="/usr/local"
+HELP_DIR="scripts"
+SCRIPTS_DIR="scripts"
+
+if [ "$0" != "./scripts/build" ] ; then
+   INSTALL_PREFIX="${0%/bin/build}"
+   HELP_DIR="$INSTALL_PREFIX/share/doc/xpc-$XPC_LIBRARY_API_VERSION"
+   SCRIPTS_DIR="$INSTALL_PREFIX/bin"
+fi
+
+source $SCRIPTS_DIR/xpc_boot_functions
+
+if [ $? != 0 ] ; then
+   echo "? 'source $SCRIPTS_DIR/xpc_boot_functions' failed.  Must abort."
+   exit 255
+fi
+
+#******************************************************************************
+# Default option values
+#------------------------------------------------------------------------------
+
+DOCONFIGURE="yes"
+DOMAKEIT="yes"
+DOCPPCONFIGURE="no"
+DODEBUG="no"
+DOTEST="no"
+DOCOVERAGE="no"
+DOPROFILING="no"
+DOLOG="no"
+DOVERSION="no"
+
+LOGFILENAME=""
+PROJECT="all"                                # xpccut etc.
+ALLPROJECTS="doc xpccut xpccut++"
+BUILDDIR="in-source"
+
+#******************************************************************************
+# Help
+#------------------------------------------------------------------------------
+
+if [ "$1" == "--help" ] ; then
+   cat $HELP_DIR/build.help
+   if [ "$XPC_LIBRARY_VERSION" == "" ] ; then
+      log "help" "Warning:  It looks like you haven't run 'bootstrap' yet."
+   fi
+   exit $EXIT_ERROR_HELP
+fi
+
+if [ $# -ge 1 ] ; then
+
+   while [ "$1" != "" ] ; do
+
+      case "$1" in
+
+         --release)
+            BUILDDIR="release"
+            DODEBUG="no"
+            ;;
+
+         release)                      # my secret option for speed
+            BUILDDIR="release"
+            DODEBUG="no"
+            DOMAKEIT="no"
+            ;;
+
+         --debug)
+            BUILDDIR="debug"
+            DODEBUG="yes"
+            ;;
+
+         debug)                        # my secret option for speed
+            BUILDDIR="debug"
+            DODEBUG="yes"
+            DOMAKEIT="no"
+            ;;
+
+         --cpp)
+            BUILDDIR="cpp"
+            DOCONFIGURE="yes"
+            DOCPPCONFIGURE="yes"
+            ;;
+
+         --build)
+            shift
+            BUILDDIR="$1"
+            if [ "$BUILDDIR" == "" ] ; then
+               die $EXIT_ERROR_NO_BUILDDIR "CLI" "Specify --build directory."
+            fi
+            ;;
+
+         --project)
+            shift
+            PROJECT="$1"
+            if [ "$PROJECT" == "" ] ; then
+               die $EXIT_ERROR_NO_PROJECT "CLI" "Specify a --project name."
+            fi
+            ;;
+
+         --projlist)
+            shift
+            ALLPROJECTS="$*"
+            ;;
+
+         --configure | -c)
+            DOCONFIGURE="yes"
+            ;;
+
+         --no-configure | -nc)
+            DOCONFIGURE="no"
+            ;;
+
+         --enable-release | -er)
+            DOCONFIGURE="yes"
+            DODEBUG="no"
+            ;;
+
+         --enable-debug | -ed)
+            DOCONFIGURE="yes"
+            DODEBUG="yes"
+            ;;
+
+         --enable-coverage)
+            DOCONFIGURE="yes"
+            DOCOVERAGE="yes"
+            DODEBUG="yes"
+            ;;
+
+         --enable-profile)
+            DOCONFIGURE="yes"
+            DOPROFILING="yes"
+            DODEBUG="yes"
+            ;;
+
+         --make | -m)
+            DOMAKEIT="yes"
+            ;;
+
+         --no-make | -nm)
+            DOMAKEIT="no"
+            ;;
+
+         --test)
+            DOTEST="yes"
+            ;;
+
+         --log)
+            DOLOG="yes"
+            shift
+            LOGFILENAME="$1"
+            if [ "$LOGFILENAME" == "" ] ; then
+               die $EXIT_ERROR_NO_LOGNAME "CLI" "Specify --log file-name."
+            fi
+            SUBSTR="${LOGFILENAME:0}"
+            if [ $SUBSTR == "-" ] || [ $SUBSTR == "--" ] ; then
+               die $EXIT_ERROR_NO_LOGNAME "CLI" "Specify legal (no hyphen) --log name."
+            fi
+            ;;
+
+         --version)
+            DOVERSION="yes"
+            ;;
+
+         *)
+            die $EXIT_ERROR_NO_SUCH_OPTION "CLI" \
+               "Unsupported XPC build option; --help for more information" ;
+            ;;
+      esac
+
+      shift
+
+   done
+
+fi
+
+#******************************************************************************
+#  Version info
+#------------------------------------------------------------------------------
+
+if [ $DOVERSION == "yes" ] ; then
+
+   echo "XPCCUT++ version $XPC_LIBRARY_VERSION $XPC_SCRIPT_EDIT_DATE"
+   exit 0
+
+fi
+
+if [ $DOLOG == "yes" ] ; then
+
+   echo "* Logging main commands to $LOGFILENAME..."
+   if [ ! -f $LOGFILENAME ] ; then
+      touch $LOGFILENAME
+      if [ $? != 0 ] ; then
+         die $EXIT_ERRORLOG "LOG" "Creating log-file $LOGFILENAME failed, aborting!"
+      fi
+   fi
+   log " "
+   log "XPCCUT++ build script" "`date`"
+   log " "
+fi
+
+#******************************************************************************
+# clean()
+#------------------------------------------------------------------------------
+
+clean()
+{
+   echo "TBD"
+}
+
+#******************************************************************************
+# Do the work
+#------------------------------------------------------------------------------
+
+echo "BUILDDIR='$BUILDDIR'"
+
+if [ $BUILDDIR != "in-source" ] ; then
+
+   log "build" "Checking for existence of out-of-source '$BUILDDIR'"
+   if [ ! -d $BUILDDIR ] ; then
+      log "build" "Recreating '$BUILDDIR'"
+      rm -rf $BUILDDIR
+      mkdir -p $BUILDDIR
+   fi
+
+   if [ -d $BUILDDIR ] ; then
+      log "build" "Descending into '$BUILDDIR'"
+      pushd $BUILDDIR
+   else
+      die $EXIT_ERROR_FAILED "build" \
+         "Failed to created out-of-source build directory '$BUILDDIR'."
+   fi
+fi
+
+if [ $DOCONFIGURE == "yes" ] ; then
+
+   DEBUGFLAG=""
+   BUILDFLAG=""
+   CONFCOMMAND="./configure"
+
+   if [ $DODEBUG == "yes" ] ; then
+      DEBUGFLAG="--enable-debug --disable-shared"
+   fi
+
+   if [ $DOCOVERAGE == "yes" ] ; then
+      DEBUGFLAG+="--enable-coverage"
+   fi
+
+   if [ $DOPROFILING == "yes" ] ; then
+      DEBUGFLAG+="--enable-profile"
+   fi
+
+   if [ $DOCPPCONFIGURE == "yes" ] ; then
+      BUILDFLAG="--disable-thisptr"
+   fi
+
+   if [ $BUILDDIR != "in-source" ] ; then
+      CONFCOMMAND="../configure"
+   fi
+
+   log "configure" \
+      "Running the new configure script in preparation for building." \
+      "configure" "Command: $CONFCOMMAND $DEBUGFLAG $BUILDFLAG"
+
+   if [ -x $CONFCOMMAND ] ; then
+      if [ $DOLOG == "yes" ] ; then
+         $CONFCOMMAND $DEBUGFLAG $BUILDFLAG >> $LOGFILENAME
+      else
+         $CONFCOMMAND $DEBUGFLAG $BUILDFLAG
+      fi
+   else
+      die $EXIT_ERROR_NO_SUCH_COMMAND "configure" \
+         "Command '$CONFCOMMAND' does not exist." \
+         "Please run the 'bootstrap' script first."
+   fi
+fi
+
+if [ $DOMAKEIT == "yes" ] ; then
+
+   if [ $PROJECT == "all" ] ; then
+
+      MAKESTATUS=0
+      TESTRESULT=0
+      for PROJ in $ALLPROJECTS ; do
+         if [ -d $PROJ ] ; then
+            pushd $PROJ
+            make
+            MAKESTATUS=$?
+            if [ $MAKESTATUS == 0 ] && [ $DOTEST == "yes" ] ; then
+               echo "* Running 'make test' for $1; please be patient..."
+               make test
+               if [ $? == 0 ] ; then
+                  echo "* Test of $1 PASSED"
+                  TESTRESULT=0
+               else
+                  echo "? Test of $1 FAILED"
+                  TESTRESULT=1
+               fi
+            fi
+            popd
+            if [ $MAKESTATUS != 0 ] ; then
+               break
+            fi
+         else
+            log "make" "Project '$PROJ' does not appear to exist, skipping it."
+         fi
+      done
+      if [ $MAKESTATUS != 0 ] ; then
+         die $EXIT_ERROR_FAILED "make" "Project '$PROJ' failed to build."
+      fi
+      if [ $TESTRESULT != 0 ] ; then
+         die $EXIT_ERROR_TEST_FAILED "test" "Project '$PROJ' test(s) failed."
+      fi
+
+   else
+
+      if [ -d $PROJECT ] ; then
+
+         MAKESTATUS=0
+         TESTRESULT=0
+         pushd $PROJECT
+         make
+         MAKESTATUS=$?
+         if [ $MAKESTATUS == 0 ] && [ $DOTEST == "yes" ] ; then
+            echo "* Running 'make test' for $1; please be patient..."
+            make test
+            if [ $? == 0 ] ; then
+               echo "* Test of $1 PASSED"
+               TESTRESULT=0
+            else
+               echo "? Test of $1 FAILED"
+               TESTRESULT=1
+            fi
+         fi
+         popd
+         if [ $MAKESTATUS != 0 ] ; then
+            die $EXIT_ERROR_FAILED "make" "Project '$PROJECT' failed to build."
+         fi
+         if [ $TESTRESULT != 0 ] ; then
+            die $EXIT_ERROR_TEST_FAILED "test" "Project '$PROJ' test(s) failed."
+         fi
+
+      else
+         die $EXIT_ERROR_NO_PROJECT "make" "Project '$PROJECT' does not exist."
+      fi
+   fi
+fi
+
+if [ $BUILDDIR != "in-source" ] ; then
+   log "--build" "Popping up from '$BUILDDIR'"
+   popd $BUILDDIR
+fi
+
+#******************************************************************************
+# build (XPCCUT)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

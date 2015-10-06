@@ -1,0 +1,39 @@
+Usage: ./build [options]                                     (1.1-2015-10-05)
+
+   'build' provides stock methods to configure and build the XPCCUT source
+   code.  It requires that 'bootstrap' has been run.  There are four
+   stock scenarios, plus other options that modify them.  If no scenario
+   options are given, an in-source release build is made.
+
+ --release           Configure/build out-of-source in directory 'release'.
+ --debug             Configure/build out-of-source build in directory 'debug'.
+ --cpp               Configure and build an out-of-source C++-configured build
+                     in the directory 'cpp'.  This option configures with
+                     --disable-thisptr to optimize the C libraries for usage
+                     in C++ code.  Note that this makes some unit-tests fail
+                     with a segfault, due to testing null-pointer handling
+                     in some of the tests.
+ --build name        Configure/build out-of-source in the directory 'name'.
+ --project name      Select which project to build. The following are
+                     currently available; 'all' is the default:
+                        all doc xpccut xpccut++ xpc xpc++ xpchello
+ --configure, -c     Run the 'configure' script (again).
+ --no-configure, -nc Do not run the 'configure' script; just build the code.
+ --enable-debug, -ed Does --configure with the --enable-debug flag.
+                     Creation of shared libraries is disabled to make debugging
+                     simpler without libtool getting in the way.
+ --enable-coverage   Turn on building test-coverage information (gcov) as
+                     well as debugging.  Off by default.
+ --enable-profile    Turn on building profiling information (gprof) as
+                     well as debugging.  Off by default.
+ --make, -m          Also make the project(s) after configuration; the default.
+ --no-make, -nm      Do not make the project(s) after configuration.  Useful
+                     if you don't want to wait for projects to be built.
+ --log file          Write the main commands to the given file. This
+                     is a good check of the progress of the build script.
+ --test              Also run "make test" for each project.
+
+If you want to build the documentation, see the README file.
+If you want to build the code, run './bootstrap' first.
+If you want to build, test, and debug the code, run
+'./bootstrap' followed by './scripts/build --test --enable-debug'.

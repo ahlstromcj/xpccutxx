@@ -1,0 +1,392 @@
+/**
+ * \file       xpc_subversion.dox
+ *
+ *    This file provides an overview of Subversion as used to package this
+ *    Basic of projects.
+ *
+ * \library    xpc_Basic
+ * \page       xpc_subversion XPC Basic and Subversion
+ * \author     Chris Ahlstrom
+ * \date       2008-02-24
+ * \update     2015-10-05
+ * \license    $XPC_Basic_GPL_LICENSE$ (See \ref xpc_Basic_license_subproject)
+ *
+ *//**
+
+\note
+   At this time (2012-07-22), I've moved from Subversion to Git, and will
+   not be updating this document further.  This document is still useful,
+   though I cannot promise that it is free of mistakes.
+
+\section xpc_Basic_svn Basic Usage of Subversion
+
+<b>Subversion</b> is an important tool used to manage the mass of <b>XPC</b>
+file.  It provides a way to archive all of the <b>XPC</b> files and to keep
+track of the changes made to them.
+
+This section describes how to use Subversion, in a very limited way.
+It is enough to get it to make a repository and access it.
+Although <b>Subversion</b> can have a web interface and access via
+an <tt>https</tt> URL, we use only SSH to gain access to the repository.
+
+The primary svn+ssh usage guidelines are:
+
+   -  Put all SSH users into a single group.
+   -  Make the repository wholly owned by that group.
+   -  Set group permissions to r/w.
+   -  Make sure that /usr/bin/svnserve is a wrapper script that sets
+      umask 002.
+   -  Same for svnlook and svnadmin.
+
+\subsection xpc_Basic_svn_create Creating the Repository
+
+For a long time, we simply created a tar-ball of all of the source code and
+copied it and refreshed it as needed.  So a large body of code existed
+already.  Unfortunately, this directory does not contain the recommended
+setup that provides the <tt>branches</tt>, <tt>tags</tt>, and <tt>trunk</tt>
+directories, but you can probably add those if you want them in your own
+fork of <tt>xpc_Basic</tt>.
+
+Here is how we created the Subversion repository
+(<i> still need to make sure this is correct, working from memory right
+ now</i>):
+
+\verbatim
+   $ mkdir -p <svn_repository_root> # e.g. /pub/www/code/
+   $ cd <svn_repository_root>       # where to store the repository's database
+   $ svnadmin create xpc_Basic      # make the empty repository
+   $ svn import xpc_Basic file:///<path_to_the_code>/xpc_Basic/
+          -m "Initial import of XPC Basic 1.0.4"
+   $ svn list file:///pub/www/code/xpc_Basic/
+   AUTHORS
+   COPYING
+   ChangeLog
+   INSTALL
+   Makefile.am
+   NEWS
+   README
+   TODO
+   bootstrap
+   configure.ac
+   contrib/
+   cut-sample-1.0/
+   doc/
+   include/
+   licenses/
+   m4/
+   po/
+   src/
+   Basic_pack
+   tools/
+   www/
+   xpc-1.0/
+   xpccut++-1.0/
+   xpccut-1.0/
+   xpchello-1.0/
+   xpcproperty-1.0/
+   xpcsandbox-1.0/
+\endverbatim
+
+We chose a location for the <b>XPC Basic</b> repository that was on a
+different partition from our original code, in an area that we wanted to
+publicize via <b>SSH</b>.  For example, the repository might be placed in
+<tt>/pub/www/code/</tt> -- this would be the path represented by 
+<tt>svn_repository_root</tt>.
+
+The second command creates a new directory called <tt>xpc_Basic</tt>, which
+is an empty repository.
+
+The third command imports all of the existing code into this repository.
+
+An alternative (changing to the root <tt>code</tt> directory.
+
+\verbatim
+   $ mkdir -p /pub/www/code/
+   $ cd /pub/www/code/
+   $ svnadmin create posix
+   $ svn import ~/ca/mls/oss_2/xpc_Basic/ file:///pub/www/code/xpc_Basic
+          -m "Initial import of XPC Basic 1.0.4"
+\endverbatim
+
+\subsection xpc_Basic_svn_local Creating a Local Working Copy
+
+For a local working copy, we create yet a third location, where we can play
+with the code to our hearts content.
+
+\verbatim
+   $ cd <working_copy_directory>
+   $ svn checkout file:///<svn_repository_root>/xpc_Basic/ xpc_Basic
+\endverbatim
+
+\subsection xpc_Basic_svn_ssh Creating a Remote Working Copy Using SSH
+
+Lastly, we want to be able to work away from home.  The simplest way, if you
+don't mind the command line, is to use <b>SSH</b>.  However, if you use
+password authentication, the requests for the password can become painful.
+Therefore, set up to use a password-protected public key, instead.  The
+instructions that follow assume the use of <i>openssh</i> on a <b>Debian</b>
+system.
+
+   -# On the machine that you wish to access remotely (call it the
+      <i>server</i>, in <tt>/etc/ssh/sshd_config</tt>, make the following
+      settings:
+      -# <tt>PubkeyAuthentication yes</tt>
+      -# <tt>PasswordAuthentication no</tt>
+      -# <tt>AuthorizedKeysFile   %h/.ssh/authorized_keys2</tt>
+   -# On the machine that you want to use for remote access (call it the
+      <i>client</i>, run <i>ssh-keygen</i> to generate the private key file
+      <tt>id_rsa</tt> and the public key file <tt>id_rsa.pub</tt>.
+      Be sure to give it a decent passphrase, for an extra level of
+      security.
+   -# Append the <tt>id_rsa.pub</tt> from your client machine to the
+      <tt>$HOME/.ssh/authorized_keys2</tt> file in your account on the
+      server.
+   -# If you have more client machines that you want to use to access, you
+      can either install the same private and public keys on them, or,
+      better, run step 2 for each one, then copy as per step 3.  It is far
+      better to generate keys for each machine.
+   -# Test that you can log into the server from the client after entering
+      the passphrase.
+   -# Entering the passphrase is tedious, so you can run the command
+      <i>ssh-add</i>, then enter the passphrase just once per client session.
+      The <b>SSH</b> key agent will then provide the passphrase whenever it
+      is needed.
+
+Note that using public-key access will really cut down on the brute-force
+login attacks on your server.
+
+Next, we create a copy of the source-code repository on our laptop using:
+
+\verbatim
+   $ cd <working_copy_directory>
+   $ svn checkout svn+ssh://<server>/<svn_repository_root>/xpc_Basic/ xpc_Basic
+\endverbatim
+
+As a specific example, let's say our remote machine has a Subversion working
+directory called <tt>/home/ahlstrom/code/svn</tt>.   And let's say the
+Subversion host's name is <tt>rock</tt> and the project archive
+directory on <tt>rock</tt> is <tt>/var/www/code</tt>.
+Then the specific commands to get the code from the host to the remote
+machine are:
+
+\verbatim
+   $ cd /home/ahlstrom/code/svn
+   $ svn checkout svn+ssh://rock/var/www/code/xpc_Basic/ xpc_Basic
+\endverbatim
+
+Our convention is to have a special directory called <tt>svn</tt> where the
+work is done.
+
+<i>Note</i>:  The server name cannot change, because the checked-out local
+repository keeps a record of where the code came from.  So if you do the
+checkout from a home machine using <b>SSH</b> with an internal hostname/IP
+address, check-ins and checou-outs from an external network, which generally
+require a different, Internet-facing hostname/IP-address, will not work.
+
+You can get around this by temporarily editing <tt>/etc/hosts</tt> to use
+map the internal hostname to the external hostname, but this is clumsy as
+heck.  Another clumsy solution is to have two checkouts on your client
+machine, and make sure to commit each before updating the other.
+A recipe for disaster!
+
+\subsection xpc_Basic_svn_usage Using the Subversion Repository
+
+Now that you have a copy of the repository, the rest is easy.
+
+   -# Edit your code until you're ready to call it a day.
+   -# If you created a new file to be checked in, run the following
+      commmand, where "new_file.c" represents the new file.
+      <tt>svn add new_file.c</tt>.
+   -# Repeat the previous step as necessary.
+   -# Change to the root of the project (e.g. <tt>xpc_Basic</tt>) and run
+      the command <tt>svn commit -m "Interim check-in; added new_file.c"</tt>.
+      You will see all new and modified modules being checked in.
+
+\verbatim
+   $ cd <working_copy_directory>
+   $ svn commit -m "Interim check-in; added new_file.c and fixed a few others."
+\endverbatim
+
+You don't have to change to the project root directory if you're sure your
+changes were isolated to a single directory -- each subdirectory includes
+the necessary information in a hidden <tt>.svn</tt> directory.
+
+Also, be sure to look at the references for further information and
+tutorials.
+
+But, above all, do not forget to <b>commit your changes</b>.  They are
+<b>not</b> active until you <b>commit</b> them!
+
+And, as soon as you make a new file, be sure to run the <tt>svn add</tt>
+command on it before you leave your session.
+
+\section xpc_Basic_xpc XPC Utility Library
+
+The <b>XPC</b> utility (or base) library is intended to be the library
+that under-pins all other <b>XPC</b> libraries and applications except
+for the unit-test libraries and the <i>Hello</i> application.
+
+It provides only the most basic support needed for applications.  It does
+not force any particular operational model.
+
+Some pared-down forms of the functionality in this library can be found
+in the <b>XPC</b> unit-test libraries and the <i>Hello</i> application.
+We wanted those items to stand on their own, to simplify the
+dependencies.
+
+The <b>XPC</b> base library does not depend on any other library.
+However, the unit-test applications for the <b>XPC</b> base library must
+obviously require the <b>XPC CUT C</b> library.
+
+<b>Status:</b> A work in progress, partly unit-tested.
+
+For a full description of the <b>XPC</b> base library, see
+\ref xpc_utility_introduction.
+
+\section xpc_Basic_xpccut XPC CUT Library Summary
+
+The <b>XPC CUT</b> library (libxpccut) is a <b>C</b> unit-test library.
+
+The <b>CUT</b> library provides a simple framework for unit-testing
+using only the <b>C</b> programming language.  This library provides a
+fairly easy way to write unit-tests that are:
+
+   -  As limited or as thorough as you like.
+   -  Self-documenting, and capable of creating a log of the test.
+   -  Able to be used as regression tests.
+   -  Easy to debug.
+
+The <b>CUT</b> library is not meant to take the place of complex test
+Basics such as <i>CppUnit</i>.  It just provides an easy way to write
+unit-tests and group them together.  It also provides an easy way to
+break each unit-test into a number of simpler sub-tests, and to find out
+which sub-test fails.  It provides for timing the tests, and controlling
+the amount of output to the screen.
+
+The developer writes a set of test-cases that follow a simple function
+signature.  The developer then instantiates a unit-test object and loads
+each test case into it.  The run of the tests is then kicked off.
+
+The fundamental result of the unit-test application is a single status
+value:  0 (all tests and sub-tests passed) or 1 (at least one test or
+sub-test failed.)
+
+The <b>XPC CUT C</b> library has no dependencies on any other
+<b>XPC</b> libraries.
+
+<b>Status:</b> Stable, well unit-tested.
+
+For a full description of the <b>CUT</b> library,
+see \ref xpccut_introduction_page.
+
+\section xpc_Basic_cutpp XPC CUT++ Library Summary
+
+The <b>XPC CUT++</b> library (libcut++) is a C++ wrapper around the
+<b>C</b> unit-test library.
+
+It also overrides some of the code in the <b>XPC CUT</b> library to allow
+a more object-oriented method for creating and loading the unit tests.
+
+The only dependency the <b>XPC CUT++</b> library has is the <b>XPC CUT
+C</b> library.  Since these libraries are so closely related, in order to
+build the <b>CUT++</b> library, the source code for it and the <b>CUT</b>
+must be built at the same time, and the modules in the <b>CUT</b> library
+(compiled to avoid null-pointer checks that are not necessary in the
+ <b>C++</b> code) are actually linked into the <b>CUT++</b> library.
+
+Luckily, the <tt>bootstrap</tt> script of the <b>XPC CUT++</b>
+automatically configures and builds the <b>XPC CUT</b> library.
+And the <tt>make install</tt> command for the <b>CUT++</b> library also
+installs the header files of the <b>CUT</b> library.
+
+<b>Status:</b> Stable.  About half unit-tested, so a few more changes
+might be expected.
+
+For a full description of the <b>CUT++</b> library,
+see \ref cutpp_introduction.
+
+\section xpc_Basic_hello XPC Hello Application Summary
+
+The <b>XPC</b> <i>Hello</i> application is a small tutorial application
+for internationalization.  It is like the <b>GNU</b> <i>Hello World</i>
+application, but takes a very minimalist approach, using one extra
+language (Spanish), and so is easier to understand.
+
+In addition, this project can be completely cleaned out, and then be
+completely rebuilt, using a bootstrap script.  This script helps make it
+easier to understand what needs to be done to internationalize an
+application.
+
+The <i>Hello</i> project came about because there is no single site that
+makes it clear how to create an internationalized application within the
+context of GNU automake.
+
+Some of the elements of this application are used as the basis for
+similar code in the <b>XPC CUT C</b>, <b>XPC CUT++</b>, and <b>XPC</b>
+base libraries.
+
+The <i>Hello</i> application has no dependencies on any other <b>XPC</b>
+libraries, and it is not meant to be unit-tested.  However, a small
+unit-test application is provided to test the installation of the
+<b>XPC CUT</b> library.
+
+<b>Status:</b> Unstable.  It works, but we may add demonstrations of
+additional libraries coming onboard in the <b>XPC</b> Basic.
+
+For a full description of the <b>CUT++</b> library,
+see \ref xpc_hello_introduction.
+
+\section xpc_Basic_cutsample XPC CUT Sample Application Summary
+
+This application is similar to the test application in the <b>XPC</b>
+<i>Hello</i> example project, but uses the <b>CUT++</b> wrapper for the
+<b>CUT</b> library.
+
+<b>Status:</b> Unstable.  It doesn't do much, but we might expand it.
+
+\section xpc_Basic_issues XPC Basic Issues and Concerns
+
+This section documents issues that exist or were solved.
+
+\subsection xpc_Basic_issues_libtool Libtool
+
+At one point, after a <i>yum</i> update on <b>Fedora</b>, we found that
+we were getting errors concerning the version of <i>libtool</i>,
+specifically the <tt>LT_INIT</tt> macro.  It turned out that we needed to
+remove the <tt>lt*.m4</tt> macros from the <tt>m4</tt> directory of each
+<b>XPC</b> project; they were old and were being used instead of the
+installed versions.
+
+\subsection xpc_Basic_issues_sandbox The XPC Sandbox Project
+
+This project is meant mainly for playing around.  Any good code in that
+project will ultimately be put into one of the other libraries, or a new
+library will be created for it.  In the meantime, the code in the sandbox is
+not documented as stringently as the other projects.
+
+\section xpc_Basic_license License Terms for the XPC Basic
+
+   See \ref xpc_Basic_license_subproject for a description of all of the
+   <b>XPC</b> Basic licensing.
+
+\section xpc_Basic_references References
+
+   -# http://subversion.org
+   -# http://www.abbeyworkshop.com/howto/misc/svn01/ <i>Subversion Cheat
+      Sheet</i>
+   -# http://svn.haxx.se/dev/archive-2004-03/0253.shtml <i>svn+ssh Setup
+      Mini-tutorial</i>, much more in-depth than our coverage, and worth
+      reading.
+
+\section xpc_Basic_unknown_page Unknown Page
+
+   Since you're reading this section, you undoubtedly clicked a link to a
+   document or section that is not yet written.  My apologies.
+
+ */
+
+/*
+ * xpc_subversion.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

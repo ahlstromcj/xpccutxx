@@ -1,0 +1,241 @@
+/* include/xpc/config.h.in.  Generated from configure.ac by autoheader.  */
+
+#define VERSION_DATE_SHORT "2015-10-05"
+#define VERSION "1.1.2"
+#define API_VERSION "1.1"
+
+
+
+/* Define COVFLAGS=-fprofile-arcs -ftest-coverage if coverage support is
+   wanted. */
+#undef COVFLAGS
+
+/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
+   systems. This function is required for `alloca.c' support on those systems.
+   */
+#undef CRAY_STACKSEG_END
+
+/* Define on cygwin */
+#undef CYGWIN
+
+/* Define to 1 if using `alloca.c'. */
+#undef C_ALLOCA
+
+/* Define DBGFLAGS=-g -O0 -DDEBUG -NWIN32 -fno-inline if debug support is
+   wanted. */
+#undef DBGFLAGS
+
+/* Define to 1 if you have `alloca', as a function or macro. */
+#undef HAVE_ALLOCA
+
+/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
+   */
+#undef HAVE_ALLOCA_H
+
+/* Define to 1 if you have the <ctype.h> header file. */
+#undef HAVE_CTYPE_H
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <errno.h> header file. */
+#undef HAVE_ERRNO_H
+
+/* Define to 1 if the system has the type `errno_t'. */
+#undef HAVE_ERRNO_T
+
+/* Define to 1 if you have the `gettimeofday' function. */
+#undef HAVE_GETTIMEOFDAY
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <libintl.h> header file. */
+#undef HAVE_LIBINTL_H
+
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
+
+/* Define to 1 if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
+
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
+#undef HAVE_MALLOC
+
+/* Define to 1 if you have the <math.h> header file. */
+#undef HAVE_MATH_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H
+
+/* Define to 1 if you have the <pthread.h> header file. */
+#undef HAVE_PTHREAD_H
+
+/* Define to 1 if the system has the type `ptrdiff_t'. */
+#undef HAVE_PTRDIFF_T
+
+/* Define to 1 if you have the `select' function. */
+#undef HAVE_SELECT
+
+/* Define to 1 if you have the <setjmp.h> header file. */
+#undef HAVE_SETJMP_H
+
+/* Define to 1 if you have the <stdarg.h> header file. */
+#undef HAVE_STDARG_H
+
+/* Define to 1 if stdbool.h conforms to C99. */
+#undef HAVE_STDBOOL_H
+
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `strerror' function. */
+#undef HAVE_STRERROR
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if `st_blksize' is a member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_BLKSIZE
+
+/* Define to 1 if your `struct stat' has `st_blksize'. Deprecated, use
+   `HAVE_STRUCT_STAT_ST_BLKSIZE' instead. */
+#undef HAVE_ST_BLKSIZE
+
+/* Define to 1 if you have the <syslog.h> header file. */
+#undef HAVE_SYSLOG_H
+
+/* Define to 1 if you have the <sys/select.h> header file. */
+#undef HAVE_SYS_SELECT_H
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/sysctl.h> header file. */
+#undef HAVE_SYS_SYSCTL_H
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <time.h> header file. */
+#undef HAVE_TIME_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if the system has the type `_Bool'. */
+#undef HAVE__BOOL
+
+/* Define if not on cygwin or mingw */
+#undef LINUX
+
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
+/* Define on Mingw */
+#undef MINGW
+
+/* Set NONULLPTR=-DXPC_NO_NULLPTR if the user wants to disable null-pointer
+   checking. */
+#undef NONULLPTR
+
+/* Set NOTHISPTR=-DXPC_NO_THISPTR if the user wants to disable this-checking.
+   */
+#undef NOTHISPTR
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define PROFLAGS=-pg (gprof) or -p (prof) if profile support is wanted. */
+#undef PROFLAGS
+
+/* Define to the type of arg 1 for `select'. */
+#undef SELECT_TYPE_ARG1
+
+/* Define to the type of args 2, 3 and 4 for `select'. */
+#undef SELECT_TYPE_ARG234
+
+/* Define to the type of arg 5 for `select'. */
+#undef SELECT_TYPE_ARG5
+
+/* Define STACKCHK=-fstack-check, if the user wants stack-checking. */
+#undef STACKCHK
+
+/* If using the C implementation of alloca, define if you know the
+   direction of stack growth for your system; otherwise it will be
+   automatically deduced at runtime.
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
+#undef STACK_DIRECTION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
+#undef TIME_WITH_SYS_TIME
+
+/* Define to 1 if your <sys/time.h> declares `struct tm'. */
+#undef TM_IN_SYS_TIME
+
+/* Version number of package */
+#undef VERSION
+
+/* Define on windows */
+#undef WIN32
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const
+
+/* Define to rpl_malloc if the replacement function should be used. */
+#undef malloc
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+#undef size_t
+
+/* Bottom of header config */
+

@@ -1,0 +1,102 @@
+#*****************************************************************************
+##
+# \file        TODO
+# \library     xpc_suite
+# \author      Chris Ahlstrom
+# \date        2011-11-11
+# \updates     2013-07-19
+# \version     $Revision$
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#-----------------------------------------------------------------------------
+
+-	Complete the support for building in Visual Studio and mingw.
+-  Determine which files besides 'configure' are needed for shipping an
+   installable package, and add them to git.
+-  Delete these files explicitly if 'make clean' will not:
+   ./contrib/Makefile.in
+   ./include/xpc/Makefile.in
+   ./include/Makefile.in
+   ./xpc/include/xpc/Makefile.in
+   ./xpc/include/Makefile.in
+   ./xpc/Makefile.in
+   ./xpc/tests/Makefile.in
+   ./xpc/w32/Makefile.in
+   ./xpc/src/Makefile.in
+   ./xpchello/include/xpc/Makefile.in
+   ./xpchello/include/Makefile.in
+   ./xpchello/Makefile.in
+   ./xpchello/tests/Makefile.in
+   ./xpchello/src/Makefile.in
+   ./doc/Makefile.in
+   ./doc/dox/Makefile.in
+   ./xpccut/include/xpc/Makefile.in
+   ./xpccut/include/Makefile.in
+   ./xpccut/Makefile.in
+   ./xpccut/tests/Makefile.in
+   ./xpccut/src/Makefile.in
+-  When building out-of-source, the xpc/src/parse_ini.c:xpc_argv_from_INI()
+   function fails because it cannot find 'parse_ini_test.ini'.  It expects
+   to see it in the current directory, but the current directory is
+   /home/ahlstrom/ca/mls/git/xpc_suite-1.1/debug/xpc/tests, while
+   in a normal build it is
+   /home/ahlstrom/ca/mls/git/xpc_suite-1.1/xpc/tests.
+   So we need to import set_directory() and add a feature to adjust
+   the 'cwd'/'pwd' accordingly.
+-  In an out-of-source build (and probably in a normal build) the
+   syncher_thread_ut test fails.
+-  In an out-of-source build (and probably in a normal build) the
+   xpc++ project has these warnings in averager and in errorlog:
+
+   cc1plus: warning: command line option "-std=gnu99" is valid for C/ObjC
+   but not for C++
+
+   cc1plus: warning: command line option "-fgnu89-inline" is valid for
+   C/ObjC but not for C++
+
+-  In an out-of-source build (and probably in a normal build) four warnings
+   like this occur:
+
+   errorlog.hpp:112:26: warning: anonymous variadic macros
+   were introduced in C99
+
+   This can be eliminated by using -std=c++0x, -std=c++11, or
+   -Wno-variadic-macros.
+
+   However, we need to know when to apply these settings while running
+   ./configure.
+
+-  Make sure all new files are added to Makefile.am in man, etc.
+-  Rename the numbering on pkgconfig directory.
+-  Work out a way to choose the conformance needed to support nullptr.
+-  Run "flawfinder" on every module and fix the warnings.  Also update
+   functions that use xpc_strlen().
+-  Resolve status of Win32 macro XPC_HAVE_ERRNO_T and the xpc-config.h w32
+   files.
+-  There are many targets (e.g. po-check) that made sense in the old
+   directory layout, but do not now, and should go away.
+-  Need to refactor the gcov/gprof targets, too, and make sure they work
+   in-source and out-of-source.
+-  Determine if we need to archive constructed m4 files (e.g. lt*.m4)
+   because they need to ship with the 'configure' tarball.
+-  Currently working on getting xpc tests to work using TESTS_ENVIRONMENTS.
+   See http://www.delorie.com/gnu/docs/automake/automake_97.html
+   Fake failures:
+
+   make[1]: Entering directory
+   home/ahlstrom/ca/mls/git/xpc_suite-1.1/debug/xpccut++/tests
+   ? --silent test of cut_unit_test failed
+   ? --hide-errors test of cut_unit_test failed
+   ? valgrind test of cut_unit_test failed
+   PASS: test_script
+
+   make[1]: Entering directory
+   home/ahlstrom/ca/mls/git/xpc_suite-1.1/debug/xpc/tests
+   Mon Jun 25 06:46:02 EDT 2012
+   ? valgrind test of errorlogging_ut failed
+   ? --silent test of parse_ini_ut failed
+   ? valgrind test of parse_ini_ut failed
+   * Although errors occurred, for now we return a success code.
+   * PASS: test_script
+
+# vim: ts=3 sw=3 ft=make
