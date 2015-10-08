@@ -1,5 +1,6 @@
+dnl ------------------------------------------------------------------------
 dnl \file          configure.ac
-dnl \library       xpccut
+dnl \library       xpccutxx
 dnl \author        Chris Ahlstrom
 dnl \date          2011-12-26
 dnl \update        2015-10-06
@@ -603,6 +604,8 @@ Do 'make dist', etc. to create gzip, zip, and shar archives.
 
 E_O_F
 
-dnl configure.ac (XPCCUT)
+dnl ------------------------------------------------------------------------
+dnl configure.ac (XPCCUTXX)
 dnl
 dnl vim: ts=3 sw=3 et ft=config
+dnl ------------------------------------------------------------------------

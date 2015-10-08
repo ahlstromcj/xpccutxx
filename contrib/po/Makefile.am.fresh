@@ -1,9 +1,9 @@
 #*****************************************************************************
-# Makefile.am (XPCCUT)
+# Makefile.am (XPCCUTXX)
 #-----------------------------------------------------------------------------
 ##
 # \file        Makefile.am
-# \library     xpccut
+# \library     xpccutxx
 # \author      Chris Ahlstrom
 # \date        2011-12-26
 # \updates     2015-10-06
@@ -96,8 +96,8 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 # Local project directories
 #------------------------------------------------------------------------------
 #
-#		top_srcdir    = ../../.. [XPC Basic directory]
-#		builddir      = /home/ahlstrom/ca/mls/git/XPC Basic-1.1/debug
+#		top_srcdir    = ../../.. [XPCCUTXX directory]
+#		builddir      = /home/ahlstrom/ca/mls/git/xpccutxx-1.1/debug
 #
 #------------------------------------------------------------------------------
 
@@ -198,7 +198,7 @@ showver:
 	@echo "XPC_LT_AGE       = $(XPC_LT_AGE)"
 
 #****************************************************************************
-# Makefile.am (XPC Basic top-level)
+# Makefile.am (XPCCUTXX)
 #------------------------------------------------------------------------------
 # vim: ts=3 sw=3 ft=automake
 #----------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 # \library    	libxpccut
 # \author     	Chris Ahlstrom
 # \date       	2008-05-08
-# \updates    	2015-10-05
+# \updates    	2015-10-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -59,7 +59,7 @@ xpclibdir=${exec_prefix}/lib/xpc-1.1
 Name: xpccut
 Description: Cross-Platform C Unit Test Library
 Version: 1.1
-URL: https://github.com/ahlstromc/xpccut++
+URL: https://github.com/ahlstromc/xpccutxx
 Requires:
 Conflicts:
 Libs: -L${xpclibdir} -lxpccut

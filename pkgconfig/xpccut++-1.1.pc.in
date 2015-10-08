@@ -6,7 +6,7 @@
 # \library    	libxpccut++
 # \author     	Chris Ahlstrom
 # \date       	2008-05-07
-# \updates    	2015-10-05
+# \updates    	2015-10-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -45,21 +45,18 @@
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-libdir=@libdir@
-includedir=@includedir@
-cutpplibdir=@cutpplibdir@
-cutppincludedir=@cutppincludedir@
-datarootdir=${prefix}/share
+xpcincludedir=@xpcincludedir@
+xpclibdir=@xpclibdir@
 
-Name: xpccut++-@XPC_API_VERSION@
-Description: Cross-Platform C++ Unit Test Framework from the XPC Suite
+Name: xpccut++
+Description: Cross-Platform C++ Unit Test Framework
 Version: @XPC_API_VERSION@
-URL: https://github.com/ahlstromc/xpccut++
+URL: https://github.com/ahlstromc/xpccutxx
 Requires:
 Conflicts:
-Libs: -L${cutpplibdir} -lxpccut++
+Libs: -L${xpclibdir} -lxpccut++
 Libs.private: -lpthread -lm
-Cflags: -I${cutppincludedir}
+Cflags: -I${xpcincludedir}
 
 #******************************************************************************
 # xpccut++-1.1.pc.in
