@@ -6,7 +6,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2008-03-07
- * \updates       2015-10-06
+ * \updates       2015-10-10
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -126,6 +126,11 @@ extern char xpccut_get_response (void);
 extern void xpccut_ms_sleep (unsigned long ms);
 extern cbool_t xpccut_get_microseconds (struct timeval * c);
 extern cbool_t xpccut_time_fix (struct timeval * c);
+extern unsigned long xpccut_time_difference_us
+(
+   struct timeval c1,
+   struct timeval c2
+);
 extern unsigned long xpccut_time_difference_ms
 (
    struct timeval c1,

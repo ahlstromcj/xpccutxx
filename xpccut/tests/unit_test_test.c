@@ -3,7 +3,7 @@
  * \library       libxpccut
  * \author        Chris Ahlstrom
  * \date          2008-03-14
- * \updates       2015-10-05
+ * \updates       2015-10-10
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -1343,7 +1343,10 @@ unit_unit_test_02_05 (const unit_test_options_t * options)
          if (ok)
          {
             double d;
+            struct timeval check_1, check_2;
+            (void) xpccut_get_microseconds(&check_1);
             xpccut_ms_sleep(50);
+            (void) xpccut_get_microseconds(&check_2);
             d = unit_test_status_time_delta(&x_status_x, false);  /* no reset */
             if (ok)
                ok = x_status_x.m_Test_Duration_ms == d;
@@ -12093,7 +12096,7 @@ unit_unit_test_05_01 (const unit_test_options_t * options)
       }
       if (unit_test_status_next_subtest(&status, "1"))
       {
-#ifndef WIN32
+#if ! defined WIN32 && defined USE_GETTEXT
          ok = xpccut_text_domain();
          unit_test_status_pass(&status, ok);
 #else

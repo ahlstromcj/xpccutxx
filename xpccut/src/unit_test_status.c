@@ -473,7 +473,7 @@ unit_test_status_start_timer
 /**
  *    This function assumes that the start-time member has been set.  It
  *    first loads the end-time member, and then calculates the time
- *    difference in seconds.
+ *    difference in milliseconds.
  *
  *    If the reset parameter is true, then the start-time is modified to the
  *    current time, so that the next call to unit_test_status_time_delta()
@@ -511,18 +511,21 @@ unit_test_status_time_delta
       else
       {
          xpccut_get_microseconds(&status->m_End_Time_us);
-         result = xpccut_time_difference_ms
+         result = xpccut_time_difference_us
          (
             status->m_Start_Time_us, status->m_End_Time_us
          );
          if (result >= 0.0)
-            status->m_Test_Duration_ms = result;            /* log the result */
+         {
+            result *= 0.001;                                /* convert to ms  */
+            status->m_Test_Duration_ms = result;
+         }
          else
             xpccut_errprint_func(_("time-difference < 0.0, left unassigned"));
 
-         if (startreset)
+         if (startreset)                                    /* set new time   */
          {
-            xpccut_get_microseconds(&status->m_Start_Time_us);    /* new time */
+            xpccut_get_microseconds(&status->m_Start_Time_us);
             xpccut_infoprint("unit-test start time reset!");
          }
       }

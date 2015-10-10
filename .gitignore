@@ -22,3 +22,4 @@ m4/po.m4
 m4/progtest.m4
 xpccut/tests/unit_test_test
 xpccut++/tests/cut_unit_test
+*.trs

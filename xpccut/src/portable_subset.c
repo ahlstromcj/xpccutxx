@@ -633,7 +633,7 @@ xpccut_time_fix
 
 /**
  *    Provides the time difference between two timeval structures in
- *    milliseconds.
+ *    mircoseconds.
  *
  *    The times are fixed, if bad, but an unnormalized timeval structure
  *    should never happen.
@@ -649,14 +649,14 @@ xpccut_time_fix
  *    Returns the difference between the two times ("c2 - c1") in
  *    milliseconds.  If the time difference was detected to be too long to
  *    fit in the return value, then 0 is returned.  The caller should avoid
- *    using the result of this function if it is 0..
+ *    using the result of this function if it is 0.
  *
  * \unittests
  *    -  None.
  */
 
 unsigned long
-xpccut_time_difference_ms
+xpccut_time_difference_us
 (
    struct timeval c1,      /**< Structure for the earlier time-stamp.         */
    struct timeval c2       /**< Structure for the later time-stamp.           */
@@ -682,8 +682,35 @@ xpccut_time_difference_ms
       result = (unsigned long) secdifference;
       result *= 1000000L;
       result += (unsigned long) usdifference;
-      result /= 1000;                                 /* convert usec to msec */
    }
+   return result;
+}
+
+/**
+ *    Provides the time difference between two timeval structures in
+ *    milliseconds.  See xpccut_time_difference_us() for more details.
+ *
+ * \return
+ *    Returns the difference between the two times ("c2 - c1") in
+ *    milliseconds.  If the time difference was detected to be too long to
+ *    fit in the return value, then 0 is returned.  The caller should avoid
+ *    using the result of this function if it is 0.
+ *
+ * \unittests
+ *    -  None.
+ */
+
+unsigned long
+xpccut_time_difference_ms
+(
+   struct timeval c1,      /**< Structure for the earlier time-stamp.         */
+   struct timeval c2       /**< Structure for the later time-stamp.           */
+)
+{
+   unsigned long result = xpccut_time_difference_us(c1, c2);
+   if (result > 0)
+      result /= 1000;                                 /* convert usec to msec */
+
    return result;
 }
 

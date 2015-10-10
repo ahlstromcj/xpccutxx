@@ -1168,7 +1168,7 @@ unit_test_post_loop
       {
          double duration_ms;
          xpccut_get_microseconds(&tests->m_End_Time_us);
-         duration_ms = xpccut_time_difference_ms
+         duration_ms = 0.001 * xpccut_time_difference_us
          (
             tests->m_Start_Time_us, tests->m_End_Time_us
          );
@@ -1227,7 +1227,7 @@ unit_test_post_loop
          {
             fprintf
             (
-               stdout, "%s:  %4.3f ms\n", _("Total test duration"), duration_ms
+               stdout, "%s: %4.3f ms\n", _("Full test duration"), duration_ms
             );
             fprintf
             (
