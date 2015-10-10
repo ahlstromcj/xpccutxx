@@ -1227,8 +1227,7 @@ unit_test_post_loop
          {
             fprintf
             (
-               stdout, "%s:  %f\n",
-               _("Total test duration (ms)"), duration_ms
+               stdout, "%s:  %4.3f ms\n", _("Total test duration"), duration_ms
             );
             fprintf
             (
@@ -1529,11 +1528,11 @@ unit_test_run_a_test_after
                   unit_test_status_passed(status) ? _("PASSED") : _("FAILED")
                );
             }
-            if (unit_test_status_duration_ms(status) > 0.0000009)
+            if (unit_test_status_duration_ms(status) >= 0.001)
             {
                fprintf
                (
-                  stdout, " (%f ms)", unit_test_status_duration_ms(status)
+                  stdout, " (%4.3f ms)", unit_test_status_duration_ms(status)
                );
             }
             else
