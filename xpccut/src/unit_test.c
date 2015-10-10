@@ -3,7 +3,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2010-03-07
- * \updates       2015-10-05
+ * \updates       2015-10-10
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -1535,6 +1535,10 @@ unit_test_run_a_test_after
                (
                   stdout, " (%f ms)", unit_test_status_duration_ms(status)
                );
+            }
+            else
+            {
+               fprintf(stdout, " (less than 1 ms)");
             }
             if (unit_test_status_error_count(status) > 1)
             {

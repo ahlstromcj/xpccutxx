@@ -3,7 +3,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2010-03-07
- * \update        2015-10-05
+ * \update        2015-10-10
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -617,6 +617,7 @@ xpccut_time_fix
          c1->tv_sec += c1->tv_usec / 1000000;
          c1->tv_usec %= 1000000;
          result = true;
+         xpccut_infoprint("deducted from tv_usec");
       }
       else if (c1->tv_usec < 0)
       {
@@ -624,6 +625,7 @@ xpccut_time_fix
          c1->tv_sec -= delta_sec;
          c1->tv_usec += delta_sec * 1000000;
          result = true;
+         xpccut_infoprint("added to tv_usec");
       }
    }
    return result;
@@ -638,7 +640,7 @@ xpccut_time_fix
  *
  * \return
  *    Returns the difference between the two times ("c2 - c1") in
- *    milliseconds.  If the time difference was detectd to be too long to
+ *    milliseconds.  If the time difference was detected to be too long to
  *    fit in the return value, then 0 is returned.  The caller should avoid
  *    using the result of this function if it is 0.
  *
@@ -654,6 +656,8 @@ xpccut_time_difference_ms
 )
 {
    unsigned long result;
+   (void) xpccut_time_fix(&c1);
+   (void) xpccut_time_fix(&c2);
    int difference = c2.tv_usec - c1.tv_usec;
    if (difference < 0)
    {

@@ -3,7 +3,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2008-03-07
- * \updates       2015-10-05
+ * \updates       2015-10-10
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -500,25 +500,37 @@ unit_test_status_time_delta
    double result = -1.0;
    if (xpccut_thisptr(status))
    {
+      if
+      (
+         status->m_Start_Time_us.tv_sec == 0 &&
+         status->m_Start_Time_us.tv_usec == 0
+      )
+      {
+         xpccut_errprint("logged unit-test start time was 0");
+      }
+      else if
+      (
+         status->m_End_Time_us.tv_sec == 0 &&
+         status->m_End_Time_us.tv_usec == 0
+      )
+      {
+         xpccut_errprint("logged unit-test end time was 0");
+      }
       xpccut_get_microseconds(&status->m_End_Time_us);
       result = xpccut_time_difference_ms
       (
          status->m_Start_Time_us, status->m_End_Time_us
       );
       if (result >= 0.0)
-      {
          status->m_Test_Duration_ms = result;               /* log the result */
-
-         /*
-          * if (unit_test_options_is_verbose(status->m_Test_Options))
-          * fprintf(stdout, "\n  %s: %f\n", _("Elapsed duration (ms)"), result);
-          */
-      }
       else
          xpccut_errprint_func(_("time-difference < 0.0, left unassigned"));
 
       if (startreset)
+      {
          xpccut_get_microseconds(&status->m_Start_Time_us); /* set start time */
+         xpccut_infoprint("unit-test start time reset!");
+      }
    }
    return result;
 }
