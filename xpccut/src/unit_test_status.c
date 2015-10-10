@@ -508,28 +508,23 @@ unit_test_status_time_delta
       {
          xpccut_errprint("logged unit-test start time was 0");
       }
-      else if
-      (
-         status->m_End_Time_us.tv_sec == 0 &&
-         status->m_End_Time_us.tv_usec == 0
-      )
-      {
-         xpccut_errprint("logged unit-test end time was 0");
-      }
-      xpccut_get_microseconds(&status->m_End_Time_us);
-      result = xpccut_time_difference_ms
-      (
-         status->m_Start_Time_us, status->m_End_Time_us
-      );
-      if (result >= 0.0)
-         status->m_Test_Duration_ms = result;               /* log the result */
       else
-         xpccut_errprint_func(_("time-difference < 0.0, left unassigned"));
-
-      if (startreset)
       {
-         xpccut_get_microseconds(&status->m_Start_Time_us); /* set start time */
-         xpccut_infoprint("unit-test start time reset!");
+         xpccut_get_microseconds(&status->m_End_Time_us);
+         result = xpccut_time_difference_ms
+         (
+            status->m_Start_Time_us, status->m_End_Time_us
+         );
+         if (result >= 0.0)
+            status->m_Test_Duration_ms = result;            /* log the result */
+         else
+            xpccut_errprint_func(_("time-difference < 0.0, left unassigned"));
+
+         if (startreset)
+         {
+            xpccut_get_microseconds(&status->m_Start_Time_us);    /* new time */
+            xpccut_infoprint("unit-test start time reset!");
+         }
       }
    }
    return result;

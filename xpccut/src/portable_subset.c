@@ -635,14 +635,21 @@ xpccut_time_fix
  *    Provides the time difference between two timeval structures in
  *    milliseconds.
  *
- *    It is meant only for unit testing, for intervals no greater than a few
- *    minutes.
+ *    The times are fixed, if bad, but an unnormalized timeval structure
+ *    should never happen.
+ *
+ *    This function is meant only for unit testing, for intervals no greater
+ *    than a few minutes.  It doesn't attempt to cover the case where c2 is
+ *    earlier than c1.
+ *
+ * \change ca 2015-10-10
+ *    Found some major errors in this function.  What a dope!
  *
  * \return
  *    Returns the difference between the two times ("c2 - c1") in
  *    milliseconds.  If the time difference was detected to be too long to
  *    fit in the return value, then 0 is returned.  The caller should avoid
- *    using the result of this function if it is 0.
+ *    using the result of this function if it is 0..
  *
  * \unittests
  *    -  None.
@@ -658,27 +665,25 @@ xpccut_time_difference_ms
    unsigned long result;
    (void) xpccut_time_fix(&c1);
    (void) xpccut_time_fix(&c2);
-   int difference = c2.tv_usec - c1.tv_usec;
-   if (difference < 0)
+   int secdifference = c2.tv_sec - c1.tv_sec;
+   if (secdifference < 0)
    {
-      int delta_sec = -difference / 1000000 + 1;
-      c1.tv_usec -= 1000000 * delta_sec;
-      c1.tv_sec += delta_sec;
-   }
-   else if (difference > 1000000)
-   {
-      int delta_sec = difference / 1000000;
-      c1.tv_usec += 1000000 * delta_sec;
-      c1.tv_sec -= delta_sec;
-   }
-   c1.tv_sec  = c2.tv_sec  - c1.tv_sec;
-   c1.tv_usec = c2.tv_usec - c1.tv_usec;
-   if (c1.tv_sec >= INT_MAX / 1000)                /* UINT_MAX in win32?   */
+      xpccut_errprint("backwards seconds in xpccut_time_difference_ms");
       result = 0;
+   }
    else
-      result = (unsigned long) c1.tv_sec * 1000 +
-         (unsigned long) c1.tv_usec / 1000;
-
+   {
+      int usdifference = c2.tv_usec - c1.tv_usec;
+      if (usdifference < 0)
+      {
+         secdifference -= 1;
+         usdifference += 1000000;
+      }
+      result = (unsigned long) secdifference;
+      result *= 1000000L;
+      result += (unsigned long) usdifference;
+      result /= 1000;                                 /* convert usec to msec */
+   }
    return result;
 }
 

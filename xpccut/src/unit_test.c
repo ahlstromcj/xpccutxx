@@ -1538,7 +1538,7 @@ unit_test_run_a_test_after
             }
             else
             {
-               fprintf(stdout, " (less than 1 ms)");
+               fprintf(stdout, " (less than 0.001 ms)");
             }
             if (unit_test_status_error_count(status) > 1)
             {
