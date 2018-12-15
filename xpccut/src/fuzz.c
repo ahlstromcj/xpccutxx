@@ -3,7 +3,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2010-03-06
- * \update        2015-10-05
+ * \updates       2018-11-12
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -975,24 +975,24 @@ xpccut_dump_string (const char * source, int source_length)
          int column;
          for (column = 0; column < columns; column++)
          {
-            char index_string[8];
-            char characters[8];
+            char index_string[32];
+            char characters[32];
             int index = base_index + column * rows;
             if (index >= source_length)
             {
-               (void) sprintf(index_string, "   ");
-               sprintf(characters, "    ");
+               (void) snprintf(index_string, sizeof index_string, "   ");
+               snprintf(characters, sizeof characters, "    ");
             }
             else
             {
                unsigned ch = (unsigned) source[index];
-               (void) sprintf(index_string, "%3d", index);
+               (void) snprintf(index_string, sizeof index_string, "%3d", index);
                if (isprint(ch))
                {
                   if (ch != ' ')
-                     sprintf(characters, "  %c ", (char) ch);
+                     snprintf(characters, sizeof characters, "  %c ", (char) ch);
                   else
-                     sprintf(characters, " \" \"");
+                     snprintf(characters, sizeof characters, " \" \"");
                }
                else
                {
@@ -1003,9 +1003,9 @@ xpccut_dump_string (const char * source, int source_length)
                    */
 
                   if (ch != 0)
-                     sprintf(characters, "0x%02X", ch & 0xff);
+                     snprintf(characters, sizeof characters, "0x%02X", ch & 0xff);
                   else
-                     sprintf(characters, "0x00");
+                     snprintf(characters, sizeof characters, "0x00");
                }
             }
             fprintf(stdout, s_format_element, index_string, characters);

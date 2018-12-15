@@ -3,7 +3,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2010-03-07
- * \updates       2015-10-05
+ * \updates       2018-11-12
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -457,7 +457,7 @@ unit_test_options_parse
          else if (strcmp(arg, "--hide-errors") == 0)
             xpccut_silence_printing();
 
-         currentarg++;
+         ++currentarg;
       }
 
       /*
@@ -468,7 +468,15 @@ unit_test_options_parse
       while (currentarg < argc)
       {
          char * arg = argv[currentarg];
-         if (strcmp(arg, "--verbose") == 0)
+         if (strcmp(arg, "--test") == 0 || strcmp(arg, "-t") == 0)
+         {
+            /*
+             * A no-op to help calling applications that do more than testing.
+             */
+
+            printf("--test option from the caller\n");
+         }
+         else if (strcmp(arg, "--verbose") == 0)
          {
             unit_test_options_is_verbose_set(options, true);
          }
@@ -588,7 +596,7 @@ unit_test_options_parse
          else if ((strcmp(arg, "--sleep-time") == 0))
          {
             int count = 0;
-            currentarg++;
+            ++currentarg;
             if ((currentarg < argc) && cut_not_nullptr(argv[currentarg]))
                count = atoi(argv[currentarg]);
 
@@ -597,7 +605,7 @@ unit_test_options_parse
          else if (strcmp(arg, "--group") == 0)
          {
             int count = 0;
-            currentarg++;
+            ++currentarg;
             if ((currentarg < argc) && cut_not_nullptr(argv[currentarg]))
             {
                if (isdigit(argv[currentarg][0]))
@@ -622,7 +630,7 @@ unit_test_options_parse
          else if (strcmp(arg, "--case") == 0)
          {
             int count = 0;
-            currentarg++;
+            ++currentarg;
             if ((currentarg < argc) && cut_not_nullptr(argv[currentarg]))
             {
                if (isdigit(argv[currentarg][0]))
@@ -650,7 +658,7 @@ unit_test_options_parse
          )
          {
             int count = 0;
-            currentarg++;
+            ++currentarg;
             if ((currentarg < argc) && cut_not_nullptr(argv[currentarg]))
             {
                if (isdigit(argv[currentarg][0]))
@@ -675,7 +683,7 @@ unit_test_options_parse
             (strcmp(arg, "--rb") == 0)
          )
          {
-            currentarg++;
+            ++currentarg;
             if ((currentarg < argc) && cut_not_nullptr(argv[currentarg]))
             {
                result = unit_test_options_prompt_before_set
@@ -695,7 +703,7 @@ unit_test_options_parse
             (strcmp(arg, "--ra") == 0)
          )
          {
-            currentarg++;
+            ++currentarg;
             if ((currentarg < argc) && cut_not_nullptr(argv[currentarg]))
             {
                result = unit_test_options_prompt_after_set
@@ -750,11 +758,11 @@ unit_test_options_parse
 \endverbatim
           *    Non-unit-test options have to be allowed in this loop, since we
           *    may be passing the same command line to a number of different
-          *    parssing functions.  Hence, there is no checking for illegal
+          *    parsing functions.  Hence, there is no checking for illegal
           *    options at this time.
           */
 
-         currentarg++;
+         ++currentarg;
       }
 
       /*

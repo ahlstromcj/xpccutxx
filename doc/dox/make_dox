@@ -8,7 +8,7 @@
 # \library    	XPCCUT
 # \author     	Chris Ahlstrom
 # \date       	2011-12-28
-# \update     	2015-10-06
+# \update     	2018-11-12
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -26,13 +26,13 @@
 #     only one instance of bash -- 'make' runs each line of code on its own
 #     instance.
 #
-# \param $1
+# \param $1 ($NEWDIR)
 #     Provides the directory where the source files of our Doxygen-based
 #     documentation are kept.  These files end with our conventional
 #     extension for Doxygen documents:  *.dox.  Normally, this directory
 #     ends up being $(srcdir), or xpc_suite-1.1/doc/dox.
 #
-# \param $2
+# \param $2 ($OPTION)
 #     Provides a string indicating which documentation we want to make.
 #     At present, the two choices are:
 #
@@ -71,13 +71,19 @@
 #     For the out-of-source build, we will copy the files back to the
 #     previous directory.
 #
+# Manual run for documentation:
+#
+#     The automatic build of documentation seems to be broken.  For now, from
+#     the project root, just run "./make_dox".
+#
 #------------------------------------------------------------------------------
 
 DOCOPY="yes"
-NEWDIR=$1
+NEWDIR="$1"
+OPTION="$2"
 LASTDIR="$(pwd)"
 
-if [ $NEWDIR == "." ] ; then
+if [ "$NEWDIR" == "." ] ; then
    DOCOPY="no"
 fi
 
@@ -85,10 +91,18 @@ if [ "$DOXYGEN" == "" ] ; then
    DOXYGEN="doxygen"
 fi
 
+if [ "$NEWDIR" == "" ] ; then
+   NEWDIR="doc/dox"
+fi
+
+if [ "$OPTION" == "" ] ; then
+   OPTION="docs"
+fi
+
 echo "Pushing to $NEWDIR"
 pushd $NEWDIR
 
-if [ $2 == "docs" ] ; then
+if [ "$OPTION" == "docs" ] ; then
 
 	echo "$DOXYGEN doxygen.cfg > dox-progress.log 2> dox-errors.log ..."
 	$DOXYGEN doxygen.cfg > dox-progress.log 2> dox-errors.log
@@ -102,10 +116,11 @@ if [ $2 == "docs" ] ; then
          rm -rf latex/
       fi
    else
-      echo "? doxygen on target $2 failed!"
+      echo "? doxygen on target '$OPTION' failed!"
    fi
+fi
 
-elif [ $2 == "userman" ] ; then
+if [ "$OPTION" == "userman" ] ; then
 
 	echo "$DOXYGEN doxygen-userman.cfg > dox-user-progress.log 2> dox-user-errors.log ..."
 	$DOXYGEN doxygen-userman.cfg > dox-user-progress.log 2> dox-user-errors.log
@@ -117,7 +132,7 @@ elif [ $2 == "userman" ] ; then
          rm -rf userman/
       fi
    else
-      echo "? doxygen on target $2 failed!"
+      echo "? doxygen on target '$OPTION' failed!"
    fi
 fi
 

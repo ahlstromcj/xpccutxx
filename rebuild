@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+#******************************************************************************
+# rebuild (XPCCUTXX)
+#------------------------------------------------------------------------------
+##
+# \file       	rebuild
+# \library    	xpccutxx
+# \author     	Chris Ahlstrom
+# \date       	2018-11-12
+# \update     	2018-11-12
+# \version    	$Revision$
+# \license    	$XPC_SUITE_GPL_LICENSE$
+#
+#     The above is modified by the following to remove even the mild GPL
+#     restrictions: Use this script in any manner whatsoever.  You
+#     don't even need to give me any credit. However, keep in mind the value
+#     of the GPL in keeping software and its descendant modifications
+#     available to the community for all time.
+#
+#     This is a quick-and-dirty script to clean and rebuild this project
+#     properly.  I can't even remember my own directions!
+#
+#------------------------------------------------------------------------------
+
+#******************************************************************************
+#  Provide a sane environment, just in case it is needed.
+#------------------------------------------------------------------------------
+
+LANG=C
+export LANG
+CYGWIN=binmode
+export CYGWIN
+
+export XPC_SCRIPT_EDIT_DATE="2018-11-12"
+export XPC_LIBRARY_API_VERSION="1.1"
+export XPC_LIBRARY_VERSION="$XPC_LIBRARY_API_VERSION.0"
+
+BUILDTYPE=""
+
+if [ "$1" == "debug" ] ; then
+   BUILDTYPE="--enable-debug"
+fi
+
+#******************************************************************************
+#  Version info
+#------------------------------------------------------------------------------
+
+if [ "$1" == "--version" ] || [ "$1" == "-v" ] ; then
+   echo "XPCCUTXX version $XPC_LIBRARY_VERSION $XPC_SCRIPT_EDIT_DATE"
+   exit 0
+fi
+
+SCRIPTS_DIR="./scripts"
+
+./bootstrap --full-clean
+./bootstrap $BUILDTYPE
+./scripts/build --test $BUILTYPE
+
+#******************************************************************************
+# rebuild (XPCCUTXX)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

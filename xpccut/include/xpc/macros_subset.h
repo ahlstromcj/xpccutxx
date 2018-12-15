@@ -6,7 +6,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2008-03-27
- * \update        2015-10-05
+ * \update        2018-12-06
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -143,39 +143,51 @@
  *    This macro tests the integer value against POSIX_SUCCESS.
  */
 
+#ifndef is_posix_success
 #define is_posix_success(x)      ((x) == POSIX_SUCCESS)
+#endif
 
 /**
  *    This macro tests the integer value against POSIX_ERROR (-1).
  */
 
+#ifndef is_posix_error
 #define is_posix_error(x)        ((x) == POSIX_ERROR)
+#endif
 
 /**
  *    This macro tests the integer value against POSIX_SUCCESS (0).
  */
 
+#ifndef not_posix_success
 #define not_posix_success(x)     ((x) != POSIX_SUCCESS)
+#endif
 
 /**
  *    This macro tests the integer value against POSIX_ERROR (-1).
  */
 
+#ifndef not_posix_error
 #define not_posix_error(x)       ((x) != POSIX_ERROR)
+#endif
 
 /**
  *    This macro set the integer value to POSIX_SUCCESS (0).  The parameter
  *    must be an lvalue, as the assignment operator is used.
  */
 
+#ifndef set_posix_success
 #define set_posix_success(x)     ((x) = POSIX_SUCCESS)
+#endif
 
 /**
  *    This macro set the integer value to POSIX_ERROR (-1).  The parameter
  *    must be an lvalue, as the assignment operator is used.
  */
 
+#ifndef set_posix_error
 #define set_posix_error(x)       ((x) = POSIX_ERROR)
+#endif
 
 /**
  *    Provides a unique typedef for boolean values.

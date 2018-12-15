@@ -1,4 +1,4 @@
-Usage: ./bootstrap [options]                                 (1.1-2015-10-06)
+Usage: ./bootstrap [options]                                 (1.1-2018-11-12)
 
    XPCCUT provides C/C++ test libraries and test applications.  'bootstrap'
    sets up GNU automake support for the project.  It can configure and
@@ -37,6 +37,12 @@ Usage: ./bootstrap [options]                                 (1.1-2015-10-06)
 
    After 'bootstrap', run 'configure' to set up a normal release build.  A
    short-cut bootstrap option is --enable-debug, which adds --disable-shared and
-   --configure. After 'bootstrap', you can alternatively run the 'build' script.
-   ('./build --help' for more information.) Try './scripts/build --test', which
-   builds and tests everything the make-files specify.
+   --configure. Alternatively, run the 'build' script. (See
+   './scripts/build --help' for more information.)
+
+   Try './scripts/build --test', which builds and tests everything the
+   make-files specify.
+
+   Note that, currently, the documentation build is broken, so it has been
+   disabled.
+

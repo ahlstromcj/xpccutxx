@@ -1,4 +1,4 @@
-Usage: ./build [options]                                     (1.1-2015-10-05)
+Usage: ./build [options]                                     (1.1-2018-11-12)
 
    'build' provides stock methods to configure and build the XPCCUT source
    code.  It requires that 'bootstrap' has been run.  There are four
@@ -33,7 +33,7 @@ Usage: ./build [options]                                     (1.1-2015-10-05)
                      is a good check of the progress of the build script.
  --test              Also run "make test" for each project.
 
-If you want to build the documentation, see the README file.
+If you want to build the documentation (currently BROKEN), see the README file.
 If you want to build the code, run './bootstrap' first.
 If you want to build, test, and debug the code, run
 './bootstrap' followed by './scripts/build --test --enable-debug'.

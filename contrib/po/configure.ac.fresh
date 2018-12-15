@@ -3,7 +3,7 @@ dnl \file          configure.ac
 dnl \library       xpccutxx
 dnl \author        Chris Ahlstrom
 dnl \date          2011-12-26
-dnl \update        2015-10-06
+dnl \update        2018-11-12
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -566,12 +566,14 @@ AH_BOTTOM(
    /* Bottom of header config */
 )
 
+dnl These targets are broken:
+dnl
 dnl po/Makefile.in po/Makefile
+dnl doc/Makefile
+dnl doc/dox/Makefile
 
 AC_CONFIG_FILES([
  Makefile
- doc/Makefile
- doc/dox/Makefile
  man/Makefile
  m4/Makefile
  include/Makefile

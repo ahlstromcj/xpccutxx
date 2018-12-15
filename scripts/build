@@ -8,7 +8,7 @@
 # \library    	xpccut
 # \author     	Chris Ahlstrom
 # \date       	2011-12-27
-# \update     	2015-10-05
+# \update     	2018-11-12
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,7 @@ export LANG
 CYGWIN=binmode
 export CYGWIN
 
-export XPC_SCRIPT_EDIT_DATE="2015-10-05"
+export XPC_SCRIPT_EDIT_DATE="2018-11-12"
 export XPC_LIBRARY_API_VERSION="1.1"
 export XPC_LIBRARY_VERSION="$XPC_LIBRARY_API_VERSION.0"
 
@@ -75,7 +75,12 @@ DOVERSION="no"
 
 LOGFILENAME=""
 PROJECT="all"                                # xpccut etc.
-ALLPROJECTS="doc xpccut xpccut++"
+
+# Building the document currently fails, so it is DISABLED.
+#
+# ALLPROJECTS="doc xpccut xpccut++"
+
+ALLPROJECTS="xpccut xpccut++"
 BUILDDIR="in-source"
 
 #******************************************************************************

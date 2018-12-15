@@ -6,7 +6,7 @@
 # \library     xpccutxx
 # \author      Chris Ahlstrom
 # \date        2011-12-26
-# \updates     2015-10-06
+# \updates     2018-11-11
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -126,10 +126,11 @@ libtool: $(LIBTOOL_DEPS)
 #-----------------------------------------------------------------------------
 #
 #  	po causes an error, need to fix it, later.
+#  	doc, same thing
 #
 #-----------------------------------------------------------------------------
 
-SUBDIRS = m4 include xpccut xpccut++ man doc pkgconfig
+SUBDIRS = m4 include xpccut xpccut++ man pkgconfig
 
 #*****************************************************************************
 # DIST_SUBDIRS
