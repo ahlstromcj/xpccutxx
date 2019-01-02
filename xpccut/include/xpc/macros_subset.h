@@ -6,7 +6,7 @@
  * \library       xpccut
  * \author        Chris Ahlstrom
  * \date          2008-03-27
- * \update        2018-12-06
+ * \update        2019-01-02
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -272,9 +272,12 @@ typedef int cbool_t;                   /* our C boolean type                  */
 #define USE_GETTEXT
 #endif
 
+#if ! defined GETTEXT_UNDERSCORE
+#define GETTEXT_UNDERSCORE
 #define _(msg)             gettext (msg)
 #define gettext_noop(msg)  msg
 #define N_(msg)            gettext_noop (msg)
+#endif
 
 #else                               /* no XPC_ENABLE_NLS defined             */
 
@@ -285,6 +288,8 @@ typedef int cbool_t;                   /* our C boolean type                  */
  *    unit-test library.
  */
 
+#if ! defined GETTEXT_UNDERSCORE
+#define GETTEXT_UNDERSCORE
 #define _(msg)             (msg)
 
 /**
@@ -293,6 +298,7 @@ typedef int cbool_t;                   /* our C boolean type                  */
  */
 
 #define N_(msg)             msg
+#endif   // GETTEXT_UNDERSCORE
 
 #endif                              /* End of XPC_ENABLE_NLS                 */
 
