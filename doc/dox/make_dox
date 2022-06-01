@@ -26,118 +26,33 @@
 #     only one instance of bash -- 'make' runs each line of code on its own
 #     instance.
 #
-# \param $1 ($NEWDIR)
-#     Provides the directory where the source files of our Doxygen-based
-#     documentation are kept.  These files end with our conventional
-#     extension for Doxygen documents:  *.dox.  Normally, this directory
-#     ends up being $(srcdir), or xpc_suite-1.1/doc/dox.
-#
-# \param $2 ($OPTION)
-#     Provides a string indicating which documentation we want to make.
-#     At present, the two choices are:
-#
-#        -  docs.  Make the normal documentation.
 #        -  userman.  Make the user manual; leave out the design
 #           documentation.
-#
-#     Right now, "docs" and "userman" make pretty much the same thing.  We
-#     will want to provide a "design" target to build the whole XPC API
-#     document, and perhaps some sub-targets that build only the API
-#     documentation for a single library.
-#
-# \usage
-#     The normal usage occurs in the Makefile.am file:
-#
-#        $(srcdir)/make_dox $(srcdir) docs
-#
-#     The usage of $(srcdir) is necessary because we did not try to set up
-#     support for having automake copy this script and the *.dox documents
-#     to the out-of-source directory.  We really don't want to do Doxygen
-#     the in the GNU Autotools way.
-#
-#------------------------------------------------------------------------------
-
-#******************************************************************************
-# To copy files or not?
-#------------------------------------------------------------------------------
-#
-#     This file should support in-source builds or out-of-source builds.
-#
-#     For in-source builds, we cannot copy the results to the previous
-#     directory, because they are the same directory, and an error will
-#     occur.  So, for an in-source build, where $(srcdir) == ".", we will
-#     not try to copy files.
-#
-#     For the out-of-source build, we will copy the files back to the
-#     previous directory.
 #
 # Manual run for documentation:
 #
 #     The automatic build of documentation seems to be broken.  For now, from
-#     the project root, just run "./make_dox".
+#     the project root, just run "./doc/dox/make_dox" to build the user manual.
 #
 #------------------------------------------------------------------------------
 
-DOCOPY="yes"
-NEWDIR="$1"
-OPTION="$2"
-LASTDIR="$(pwd)"
+DOXYGEN="doxygen"
 
-if [ "$NEWDIR" == "." ] ; then
-   DOCOPY="no"
-fi
-
-if [ "$DOXYGEN" == "" ] ; then
-   DOXYGEN="doxygen"
-fi
-
-if [ "$NEWDIR" == "" ] ; then
-   NEWDIR="doc/dox"
-fi
-
-if [ "$OPTION" == "" ] ; then
-   OPTION="docs"
-fi
-
-echo "Pushing to $NEWDIR"
-pushd $NEWDIR
-
-if [ "$OPTION" == "docs" ] ; then
-
-	echo "$DOXYGEN doxygen.cfg > dox-progress.log 2> dox-errors.log ..."
-	$DOXYGEN doxygen.cfg > dox-progress.log 2> dox-errors.log
-
+if [ "$1" == "clean" ] ; then
+   rm -rf html
+   rm -rf latex
+   rm -f *.log
+else
+   echo "$DOXYGEN doxygen.cfg > dox-user-progress.log 2> dox-user-errors.log ..."
+   $DOXYGEN doxygen.cfg > dox-user-progress.log 2> dox-user-errors.log
    if [ $? == 0 ] ; then
-      if [ $DOCOPY == "yes" ] ; then
-         cp -r html/ $LASTDIR
-         cp -r latex/ $LASTDIR
-         mv dox-progress.log  dox-errors.log $LASTDIR
-         rm -rf html/
-         rm -rf latex/
-      fi
+      pushd latex
+      make
+      cp refman.pdf ../../xpc_c_cpp_unit_test_library.pdf
    else
-      echo "? doxygen on target '$OPTION' failed!"
+      echo "Error.  Check the log files."
    fi
 fi
-
-if [ "$OPTION" == "userman" ] ; then
-
-	echo "$DOXYGEN doxygen-userman.cfg > dox-user-progress.log 2> dox-user-errors.log ..."
-	$DOXYGEN doxygen-userman.cfg > dox-user-progress.log 2> dox-user-errors.log
-
-   if [ $? == 0 ] ; then
-      if [ $DOCOPY == "yes" ] ; then
-         cp -r userman/ $LASTDIR
-         mv dox-user-progress.log dox-user-errors.log $LASTDIR
-         rm -rf userman/
-      fi
-   else
-      echo "? doxygen on target '$OPTION' failed!"
-   fi
-fi
-
-echo "Changing back to $LASTDIR"
-popd
 
 #******************************************************************************
 # make_dox (XPCCUT)

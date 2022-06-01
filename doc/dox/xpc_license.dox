@@ -6,9 +6,8 @@
  * \page       xpc_suite_license_subproject Licenses, XPC Library Suite
  * \library    xpc_suite and its libraries, applications, and documents
  * \author     Chris Ahlstrom
- * \date       2008-02-24
- * \update     2015-10-05
- * \license    $XPC_SUITE_GPL_LICENSE$
+ * \date       2008-02-24 to 2022-06-01
+ * \license    XPC GPL 3
  *
  *    This module provides the license text for the XPC library suite.
  *
@@ -16,9 +15,7 @@
 
 \section xpc_suite_license_text License Terms for the XPC Library Suite
 
-   Wherever the tag $XPC_SUITE_GPL_LICENSE$ appears, substitute the
-   appropriate license text, depending on whether the project is a library,
-   application, documentation, or server software.  We're not going to
+   We're not going to
    include paragraphs of licensing information in every module; you are
    responsible for coming here to read the licensing information.
    
@@ -34,7 +31,7 @@
 
    The <b>XPC</b> application license is the <b>GNU GPLv3</b>.
 
-   Copyright (C) 2008-2013 by Chris Ahlstrom
+   Copyright (C) 2008-2022 by Chris Ahlstrom
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,7 +60,7 @@
 
    The <b>XPC</b> library license is the <b>GNU LGPLv3</b>.
 
-   Copyright (C) 2008-2013 by Chris Ahlstrom
+   Copyright (C) 2008-2022 by Chris Ahlstrom
 
    This library is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published
@@ -92,7 +89,7 @@
 
    The <b>XPC</b> documentation license is the <b>GNU FDLv1.3</b>.
 
-   Copyright (C) 2008-2013 by Chris Ahlstrom
+   Copyright (C) 2008-2022 by Chris Ahlstrom
 
    This documentation is free documentation; you can redistribute it and/or
    modify it under the terms of the GNU Free Documentation License as
@@ -121,7 +118,7 @@
 
    The <b>XPC</b> "Affero" license is the <b>GNU AGPLv3</b>.
 
-   Copyright (C) 2008-2013 by Chris Ahlstrom
+   Copyright (C) 2008-2022 by Chris Ahlstrom
 
    This server software is free server software; you can redistribute it and/or
    modify it under the terms of the GNU Affero General Public License as

@@ -1,21 +1,16 @@
 /**
  * \file       xpc_coverage_profiling.dox
- *
- *    This file provides a tutorial on using the <b>GNU</b> test-coverage and
- *    profiling tools.
- *
  * \library    libxpccut, the C unit-test library
- * \page       xpc_coverage_profiling Unit Test Coverage and Profiling
  * \author     Chris Ahlstrom
- * \date       2009-03-14
- * \updates    2015-10-05
- * \license    $XPC_SUITE_GPL_LICENSE$ (see \ref xpc_suite_license_subproject)
- *
- *    No coverage_profiling is provided, since this documentation could be
- *    part of a more comprehensive documentation package covering many
- *    libraries and applications.
+ * \date       2009-03-14 to 2022-06-01
+ * \license    XPC GPL 3
  *
  *//**
+
+\page       xpc_coverage_profiling Unit Test Coverage and Profiling
+
+This file provides a tutorial on using the <b>GNU</b> test-coverage and
+profiling tools.
 
 \section xpc_cp_introduction Introduction to Coverage Testing and Profiling
 

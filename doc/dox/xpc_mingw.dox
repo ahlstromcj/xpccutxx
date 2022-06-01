@@ -1,17 +1,16 @@
 /**
  * \file       xpc_mingw.dox
- *
- *    This file provides information about building XPC in the Mingw
- *    environment, along with how to use pthreads in Mingw and Windows.
- *
  * \library    xpc_mingw
- * \mainpage   The XPC Suite with Mingw, Windows, and pthreads-w32
  * \author     Chris Ahlstrom
- * \date       2012-01-09
- * \update     2015-10-05
- * \license    $XPC_SUITE_GPL_LICENSE$ (See \ref xpc_mingw_license_subproject)
+ * \date       2012-01-09 to 2022-06-01
+ * \license    XPC GPL 3
  *
  *//**
+
+\page   The XPC Suite with Mingw, Windows, and pthreads-w32
+
+This file provides information about building XPC in the Mingw
+environment, along with how to use pthreads in Mingw and Windows.
 
 \section xpc_mingw_intro Introduction
 
